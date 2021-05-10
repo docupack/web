@@ -1,5 +1,19 @@
 import { FC } from "react";
 import { UserMenu } from "./UserMenu";
+import UserNav from "./UserNav";
+
+const navItems = [
+  {
+    name: "Home",
+    href: "/",
+    current: true,
+  },
+  {
+    name: "New Document",
+    href: "/documents/new",
+    current: false,
+  },
+];
 
 export const Sidebar: FC = () => {
   return (
@@ -13,9 +27,10 @@ export const Sidebar: FC = () => {
               alt="Workflow"
             />
           </div>
+          {/* User account dropdown */}
           <div className="h-0 flex-1 flex flex-col overflow-y-auto">
-            {/* User account dropdown */}
             <UserMenu name={"Can Sirin"} />
+            <UserNav items={navItems} />
           </div>
         </div>
       </div>
