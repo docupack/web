@@ -1,6 +1,8 @@
 import { ChevronRightIcon } from "@heroicons/react/solid";
 import { PinnedDocuments } from "../components/PinnedDocuments";
 import { DocumentsTable } from "../features/document";
+import DocumentsList from "../features/document/components/DocumentsTable/DocumentsList";
+import MainColumn from "../components/MainColumn";
 
 const documents = [
   {
@@ -48,36 +50,16 @@ const documents = [
   },
 ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function Example() {
   return (
-    <div className="h-screen flex overflow-hidden bg-white">
-      {/* Main column */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-          <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
-                Home
-              </h1>
-            </div>
-          </div>
-          {/* Pinned projects */}
-          <PinnedDocuments documents={documents} />
+    <MainColumn pageTitle={"Home"}>
+      {/* Pinned projects */}
+      <PinnedDocuments documents={documents} />
 
-          {/* Projects list (only on smallest breakpoint) */}
-
-          {/* Projects table (small breakpoint and up) */}
-          <div className="hidden mt-8 sm:block">
-            <div className="align-middle inline-block min-w-full border-b border-blue-200">
-              <DocumentsTable documents={documents} />
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+      {/* Projects list (only on smallest breakpoint) */}
+      <DocumentsList documents={documents} />
+      {/* Projects table (small breakpoint and up) */}
+      <DocumentsTable documents={documents} />
+    </MainColumn>
   );
 }
