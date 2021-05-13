@@ -1,2 +1,2 @@
 export * from "./DocumentsTable";
-// export * from "./DocumentUpload";
+export * from "./DocumentUpload";
