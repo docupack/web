@@ -41,11 +41,8 @@ export const UserMenu: FC<Props> = ({ name }) => {
               className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none"
             >
               <div className="py-1">
-                <MenuItem link="/profile" text="View Profile" />
-                <MenuItem link="/settings" text="Settings" />
-                <MenuItem link="/notifications" text="Notifications" />
-                <MenuItem link="/support" text="Support" />
-                <MenuItem link="/logout" text="Logout" />
+                <MenuItem link="/" text="Home" />
+                <MenuItem link="documents/new" text="New Document" />
               </div>
             </Menu.Items>
           </OpenMenuTransition>

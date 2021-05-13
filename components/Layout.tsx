@@ -1,4 +1,3 @@
-import { HomeIcon } from "@heroicons/react/outline";
 import type { FC, ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 
