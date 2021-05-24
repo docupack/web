@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
-import { documents, templates } from "../../index";
 import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
+import { templates } from "../../../mocks";
 
 const EditTemplatePage = () => {
   const router = useRouter();
@@ -14,16 +14,15 @@ const EditTemplatePage = () => {
   const [documentList, setDocumentList] = useState(template.documentList);
 
   const addMoreDocument = () => {
-    setDocumentList([
-      ...documentList,
-      {
+    setDocumentList(
+      documentList.concat({
         type: "",
         id: Date.now().toString(),
         name: "",
         createdAt: Date.now().toString(),
         updatedAt: Date.now().toString(),
-      },
-    ]);
+      })
+    );
   };
 
   const removeDocument = (id) => {
@@ -44,7 +43,7 @@ const EditTemplatePage = () => {
   };
 
   return (
-    <MainColumn pageTitle={"Edit Your Template"}>
+    <MainColumn pageTitle="Edit Your Template">
       <form
         className="divide-y divide-gray-200 lg:col-span-9"
         action="#"
