@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import MainColumn from "../../components/MainColumn";
 import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
 
-const NewDocumentPage = () => {
+const NewTemplatePage = () => {
   const [documentList, setDocumentList] = useState([]);
 
   const addMoreDocument = () => {
-    setDocumentList([...documentList, { type: "", id: Date.now() }]);
+    setDocumentList(documentList.concat({ type: "", id: Date.now() }));
   };
 
   const removeDocument = (id) => {
@@ -70,7 +70,6 @@ const NewDocumentPage = () => {
                     rows={3}
                     className="shadow-sm focus:ring-light-blue-500 focus:border-light-blue-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
                     placeholder="I am creating this template for H1B visa applications..."
-                    defaultValue={""}
                   />
                 </div>
                 <p className="mt-2 text-sm text-gray-500">
@@ -140,4 +139,4 @@ const NewDocumentPage = () => {
   );
 };
 
-export default NewDocumentPage;
+export default NewTemplatePage;

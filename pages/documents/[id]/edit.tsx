@@ -1,7 +1,7 @@
 import React from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
-import { documents } from "../../index";
+import { documents } from "../../../mocks";
 
 const EditDocumentPage = () => {
   const router = useRouter();
@@ -11,10 +11,8 @@ const EditDocumentPage = () => {
     return document.id === id;
   });
 
-  console.log(document);
-
   return (
-    <MainColumn pageTitle={"Edit Your Document"}>
+    <MainColumn pageTitle="Edit Your Document">
       <form
         className="divide-y divide-gray-200 lg:col-span-9"
         action="#"
