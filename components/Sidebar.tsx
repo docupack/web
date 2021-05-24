@@ -13,6 +13,7 @@ const navItems = [
     href: "/documents/new",
     current: false,
   },
+  { name: "New Template", href: "/templates/new", current: false },
 ];
 
 export const Sidebar: FC = () => {
