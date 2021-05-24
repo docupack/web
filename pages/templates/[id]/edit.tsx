@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
 import { documents, templates } from "../../index";
-import { MinusCircleIcon } from "@heroicons/react/solid";
+import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
 
 const EditTemplatePage = () => {
   const router = useRouter();
@@ -11,6 +11,37 @@ const EditTemplatePage = () => {
   const template = templates.find((template) => {
     return template.id === id;
   });
+  const [documentList, setDocumentList] = useState(template.documentList);
+
+  const addMoreDocument = () => {
+    setDocumentList([
+      ...documentList,
+      {
+        type: "",
+        id: Date.now().toString(),
+        name: "",
+        createdAt: Date.now().toString(),
+        updatedAt: Date.now().toString(),
+      },
+    ]);
+  };
+
+  const removeDocument = (id) => {
+    const list = documentList.filter((doc) => doc.id !== id);
+    setDocumentList(list);
+  };
+
+  const handleInputChange = (e, id) => {
+    const { value } = e.target;
+    const list = documentList.map((doc) => {
+      if (doc.id === id) {
+        return { ...doc, type: value };
+      }
+      return doc;
+    });
+
+    setDocumentList(list);
+  };
 
   return (
     <MainColumn pageTitle={"Edit Your Template"}>
@@ -36,16 +67,23 @@ const EditTemplatePage = () => {
                     id="templateName"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
-                    value={template.name}
+                    value={template?.name}
                   />
                 </div>
+              </div>
+              <div>
                 <label
-                  htmlFor="templateDocumentList"
-                  className="block text-sm font-medium text-gray-700 mt-6"
+                  htmlFor="documentType"
+                  className="block text-sm font-medium text-gray-700"
                 >
-                  Required Documents
+                  Document Type
+                  <PlusIcon
+                    className="inline-block ml-1 mr-0.5 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer"
+                    onClick={addMoreDocument}
+                  />
+                  {documentList.length} document(s)
                 </label>
-                {template.documentList.map((doc) => {
+                {documentList.map((doc) => {
                   return (
                     <div
                       className="mt-3 rounded-md shadow-sm flex"
@@ -53,12 +91,19 @@ const EditTemplatePage = () => {
                     >
                       <input
                         type="text"
-                        name="templateDocumentList"
-                        id="templateDocumentList"
+                        name="documentType"
+                        id="documentType"
                         className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
-                        value={doc.name}
+                        placeholder="Passport, visa..."
+                        value={doc.type}
+                        onChange={(event) => {
+                          handleInputChange(event, doc.id);
+                        }}
                       />{" "}
-                      <MinusCircleIcon className="inline-block ml-1 mr-0.5 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer" />
+                      <MinusCircleIcon
+                        className="inline-block ml-1 mr-0.5 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer"
+                        onClick={() => removeDocument(doc.id)}
+                      />
                     </div>
                   );
                 })}
