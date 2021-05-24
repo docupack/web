@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import Link from "next/link";
 import React, { FC } from "react";
 import { Badge } from "../../../../components/Badge";
 import { Document } from "../../types";
@@ -19,9 +20,11 @@ export const DocumentsTableRow: FC<Props> = ({ document }) => {
             )}
             aria-hidden="true"
           />
-          <a href="#" className="truncate hover:text-gray-600">
-            <span>{document.name}</span>
-          </a>
+          <Link href={`/documents/${document.id}/edit`}>
+            <a className="truncate hover:text-gray-600">
+              <span>{document.name}</span>
+            </a>
+          </Link>
         </div>
       </td>
       <td className="px-6 py-3 text-sm text-gray-500 font-medium">

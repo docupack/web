@@ -2,11 +2,11 @@ import React, { FC } from "react";
 import { Document } from "../../types";
 import { DocumentsTableRow } from "./DocumentsTableRow";
 
-type DocumentsTableProps = {
+type Props = {
   documents: Document[];
 };
 
-export const DocumentsTable: FC<DocumentsTableProps> = ({ documents }) => {
+export const DocumentsTable: FC<Props> = ({ documents }) => {
   return (
     <div className="hidden mt-8 sm:block">
       <div className="align-middle inline-block min-w-full border-b border-blue-200">
@@ -27,7 +27,7 @@ export const DocumentsTable: FC<DocumentsTableProps> = ({ documents }) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
             {documents.map((doc) => (
-              <DocumentsTableRow document={doc} />
+              <DocumentsTableRow key={doc.id} document={doc} />
             ))}
           </tbody>
         </table>

@@ -4,6 +4,10 @@ import React from "react";
 import classNames from "classnames";
 import { Badge } from "../../../../components/Badge";
 
+type Props = {
+  documents: Document[];
+};
+
 const DocumentsList = ({ documents }) => {
   return (
     <div className="mt-10 sm:hidden">
