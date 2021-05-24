@@ -1,11 +1,10 @@
 import { Menu } from "@headlessui/react";
 import classNames from "classnames";
 import Link from "next/link";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 
 type Props = {
   href: string;
-  children: ReactNode;
 };
 
 export const MenuItem: FC<Props> = ({ href, children }) => {
