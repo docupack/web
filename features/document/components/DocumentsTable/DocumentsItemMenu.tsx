@@ -41,7 +41,6 @@ export const DocumentsItemMenu: FC<Props> = ({ document }) => {
                   {({ active }) => (
                     <Link href={`/documents/${document.id}/edit`}>
                       <a
-                        href="#"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
@@ -63,7 +62,6 @@ export const DocumentsItemMenu: FC<Props> = ({ document }) => {
                 <Menu.Item>
                   {({ active }) => (
                     <a
-                      href="#"
                       className={classNames(
                         active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"
