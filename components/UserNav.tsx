@@ -20,9 +20,8 @@ const UserNav: FC<Props> = ({ items }) => {
     <nav className="px-3 mt-6">
       <div className="space-y-1">
         {items.map((item) => (
-          <Link href={item.href}>
+          <Link href={item.href} key={item.name}>
             <a
-              key={item.name}
               className={classNames(
                 router.asPath === item.href
                   ? "bg-gray-200 text-gray-900"
