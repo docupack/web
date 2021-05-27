@@ -1,23 +1,22 @@
 import { PinnedDocuments } from "../components/PinnedDocuments";
 import { DocumentsTable } from "../features/document";
-import DocumentsList from "../features/document/components/DocumentsTable/DocumentsList";
 import MainColumn from "../components/MainColumn";
 import { TemplatesTable } from "../features/template";
-import { documents, pinnedDocuments, templates } from "../mocks";
+import { withAuthenticator } from "@aws-amplify/ui-react";
 
-export default function Example() {
+function Example() {
   return (
-    <MainColumn pageTitle={"Home"}>
+    <MainColumn pageTitle="Home">
       {/* Pinned projects */}
-      <PinnedDocuments documents={pinnedDocuments} />
       <PinnedDocuments />
 
       {/* Projects list (only on smallest breakpoint) */}
-      <DocumentsList documents={documents} />
+      {/*<DocumentsList documents={documents} />*/}
       {/* Projects table (small breakpoint and up) */}
-      <DocumentsTable documents={documents} />
-      <TemplatesTable templates={templates} />
       <DocumentsTable />
+      <TemplatesTable />
     </MainColumn>
   );
 }
+
+export default withAuthenticator(Example);

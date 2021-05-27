@@ -1,13 +1,24 @@
-import React, { FC } from "react";
-import classNames from "classnames";
-import { Template } from "../../types";
+import { FC, useEffect, useState } from "react";
 import { TemplatesTableRow } from "./TemplatesTableRow";
+import { API } from "aws-amplify";
+import { listTemplates } from "../../../../graphql/queries";
+import { ListTemplatesQuery } from "../../../../API";
 
-type Props = {
-  templates: Template[];
-};
+export const TemplatesTable: FC = () => {
+  const [templates, setTemplates] = useState([]);
 
-export const TemplatesTable: FC<Props> = ({ templates }) => {
+  useEffect(() => {
+    fetchTemplates();
+  }, [templates]);
+
+  const fetchTemplates = async () => {
+    const templates = (await API.graphql({
+      query: listTemplates,
+    })) as { data: ListTemplatesQuery };
+
+    setTemplates(templates.data.listTemplates.items);
+  };
+
   return (
     <div className="hidden mt-8 sm:block">
       <div className="align-middle inline-block min-w-full border-b border-blue-200">
@@ -18,7 +29,7 @@ export const TemplatesTable: FC<Props> = ({ templates }) => {
                 <span className="lg:pl-2">Templates</span>
               </th>
               <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Required Documents
+                Required Document Types
               </th>
               <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Last updated
