@@ -1,23 +1,55 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
-import { documents } from "../../../mocks";
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import { API } from "aws-amplify";
+import { getDocument } from "../../../graphql/queries";
+import { GetDocumentQuery } from "../../../API";
+import { updateDocument } from "../../../graphql/mutations";
 
 const EditDocumentPage = () => {
+  const [doc, setDoc] = useState(null);
   const router = useRouter();
   const { id } = router.query;
 
-  const document = documents.find((document) => {
-    return document.id === id;
-  });
+  const fetchDocument = async () => {
+    const documentData = (await API.graphql({
+      query: getDocument,
+      variables: { id },
+    })) as { data: GetDocumentQuery };
+
+    setDoc(documentData.data.getDocument);
+  };
+
+  useEffect(() => {
+    if (!id) return;
+    fetchDocument();
+  }, [id]);
+
+  const onChange = (e) => {
+    setDoc(() => ({
+      ...doc,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const { name, description, type } = doc || {};
+
+  const updateCurrentDocument = async (e) => {
+    e.preventDefault();
+    if (!name || !type) return;
+    const updatedDocument = { id, name, type, description };
+    await API.graphql({
+      query: updateDocument,
+      variables: { input: updatedDocument },
+    });
+
+    await router.push(`/documents/${id}`);
+  };
 
   return (
     <MainColumn pageTitle="Edit Your Document">
-      <form
-        className="divide-y divide-gray-200 lg:col-span-9"
-        action="#"
-        method="POST"
-      >
+      <form className="divide-y divide-gray-200 lg:col-span-9" method="POST">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
@@ -31,12 +63,13 @@ const EditDocumentPage = () => {
                 </label>
                 <div className="mt-1 rounded-md shadow-sm flex">
                   <input
+                    onChange={onChange}
                     type="text"
-                    name="documentName"
+                    name="name"
                     id="documentName"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
-                    value={document.name}
+                    value={doc?.name}
                   />
                 </div>
               </div>
@@ -51,12 +84,13 @@ const EditDocumentPage = () => {
                 </label>
                 <div className="mt-1">
                   <textarea
+                    onChange={onChange}
                     id="description"
                     name="description"
                     rows={3}
                     className="shadow-sm focus:ring-light-blue-500 focus:border-light-blue-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
                     placeholder="This document is from 5 years ago - Feb 14 2016..."
-                    defaultValue={""}
+                    value={doc?.description}
                   />
                 </div>
                 <p className="mt-2 text-sm text-gray-500">
@@ -66,19 +100,20 @@ const EditDocumentPage = () => {
               {/*Document Type*/}
               <div>
                 <label
-                  htmlFor="documentName"
+                  htmlFor="documentType"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Document Type
                 </label>
                 <div className="mt-1 rounded-md shadow-sm flex">
                   <input
+                    onChange={onChange}
                     type="text"
-                    name="documentName"
-                    id="documentName"
+                    name="type"
+                    id="documentType"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
-                    value={document.type}
+                    value={doc?.type}
                   />
                 </div>
               </div>
@@ -94,6 +129,7 @@ const EditDocumentPage = () => {
                   </button>
                   <button
                     type="submit"
+                    onClick={updateCurrentDocument}
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Save
@@ -108,4 +144,4 @@ const EditDocumentPage = () => {
   );
 };
 
-export default EditDocumentPage;
+export default withAuthenticator(EditDocumentPage);

@@ -2,21 +2,36 @@ import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
 import Link from "next/link";
-import React, { FC, Fragment } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import { Document } from "../features/document";
+import { API } from "aws-amplify";
+import { listDocuments } from "../graphql/queries";
+import { ListDocumentsQuery } from "../API";
 
-type Props = {
-  documents: Document[];
-};
+export const PinnedDocuments: FC = () => {
+  const [documents, setDocuments] = useState([]);
 
-export const PinnedDocuments: FC<Props> = ({ documents }) => {
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  const fetchDocuments = async () => {
+    const docs = (await API.graphql({
+      query: listDocuments,
+    })) as { data: ListDocumentsQuery };
+
+    setDocuments(docs.data.listDocuments.items);
+  };
+
+  const pinnedDocuments = documents.sort(() => 0.5 - Math.random()).slice(0, 3);
+
   return (
     <div className="px-4 mt-6 sm:px-6 lg:px-8">
       <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
         Pinned Documents
       </h2>
       <ul className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3">
-        {documents.map((doc) => (
+        {pinnedDocuments.map((doc) => (
           <li
             key={doc.id}
             className="relative col-span-1 flex shadow-sm rounded-md"
@@ -30,12 +45,11 @@ export const PinnedDocuments: FC<Props> = ({ documents }) => {
             </div>
             <div className="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
               <div className="flex-1 px-4 py-2 text-sm truncate">
-                <a
-                  href="#"
-                  className="text-gray-900 font-medium hover:text-gray-600"
-                >
-                  {doc.name}
-                </a>
+                <Link href={`/documents/${doc.id}`}>
+                  <a className="text-gray-900 font-medium hover:text-gray-600">
+                    {doc.name}
+                  </a>
+                </Link>
               </div>
               <PinnedDocumentMenu document={doc} />
             </div>

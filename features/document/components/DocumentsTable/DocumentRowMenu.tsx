@@ -6,14 +6,25 @@ import {
 } from "@heroicons/react/outline";
 import classNames from "classnames";
 import Link from "next/link";
-import React, { FC, Fragment } from "react";
+import { FC, Fragment } from "react";
 import { Document } from "../../types";
+import { API } from "aws-amplify";
+import { deleteDocument as deleteDocumentMutation } from "../../../../graphql/mutations";
+import { listDocuments } from "../../../../graphql/queries";
+import { ListDocumentsQuery } from "../../../../API";
 
 type Props = {
   document: Document;
 };
 
-export const DocumentsItemMenu: FC<Props> = ({ document }) => {
+export const DocumentRowMenu: FC<Props> = ({ document }) => {
+  const deleteDocument = async (id) => {
+    await API.graphql({
+      query: deleteDocumentMutation,
+      variables: { input: { id } },
+    });
+  };
+
   return (
     <Menu as="div" className="relative flex justify-end items-center">
       {({ open }) => (
@@ -61,9 +72,11 @@ export const DocumentsItemMenu: FC<Props> = ({ document }) => {
               <div className="py-1">
                 <Menu.Item>
                   {({ active }) => (
-                    <a
+                    <button
+                      type="button"
+                      onClick={() => deleteDocument(document.id)}
                       className={classNames(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                        active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"
                       )}
                     >
@@ -72,7 +85,7 @@ export const DocumentsItemMenu: FC<Props> = ({ document }) => {
                         aria-hidden="true"
                       />
                       Delete
-                    </a>
+                    </button>
                   )}
                 </Menu.Item>
               </div>
