@@ -10,12 +10,14 @@ export default function Example() {
     <MainColumn pageTitle={"Home"}>
       {/* Pinned projects */}
       <PinnedDocuments documents={pinnedDocuments} />
+      <PinnedDocuments />
 
       {/* Projects list (only on smallest breakpoint) */}
       <DocumentsList documents={documents} />
       {/* Projects table (small breakpoint and up) */}
       <DocumentsTable documents={documents} />
       <TemplatesTable templates={templates} />
+      <DocumentsTable />
     </MainColumn>
   );
 }

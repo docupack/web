@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { FC } from "react";
 import { Badge } from "../../../../components/Badge";
 import { Document } from "../../types";
-import { DocumentsItemMenu } from "./DocumentsItemMenu";
+import { DocumentRowMenu } from "./DocumentRowMenu";
 
 type Props = {
   document: Document;
@@ -20,14 +20,14 @@ export const DocumentsTableRow: FC<Props> = ({ document }) => {
             )}
             aria-hidden="true"
           />
-          <Link href={`/documents/${document.id}/edit`}>
+          <Link href={`/documents/${document.id}`}>
             <a className="truncate hover:text-gray-600">
               <span>{document.name}</span>
             </a>
           </Link>
         </div>
       </td>
-      <td className="px-6 py-3 text-sm text-gray-500 font-medium">
+      <td className="px-6 py-3 text-sm text-gray-500 whitespace-nowrap font-medium">
         <div className="flex items-center space-x-2">
           <Badge size="sm" bgColor="blue" textColor="blue">
             {document.type}
@@ -38,7 +38,7 @@ export const DocumentsTableRow: FC<Props> = ({ document }) => {
         {document.updatedAt}
       </td>
       <td className="pr-6">
-        <DocumentsItemMenu document={document} />
+        <DocumentRowMenu document={document} />
       </td>
     </tr>
   );
