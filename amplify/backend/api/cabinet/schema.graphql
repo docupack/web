@@ -1,0 +1,79 @@
+type Document
+@model
+@auth(
+  rules: [
+    {
+      allow: owner
+      ownerField: "owner"
+      operations: [create, update, delete, read]
+    }
+  ]
+) {
+  id: ID!
+  name: String!
+  description: String
+  type: String!
+  url: String
+
+  packs: [PackDocument] @connection(keyName: "byDocument", fields: ["id"])
+
+  createdAt: String
+  updatedAt: String
+  owner: String
+}
+
+type PackDocument
+@model(queries: null)
+@key(name: "byDocument", fields: ["documentID", "packID"])
+@key(name: "byPack", fields: ["packID", "documentID"]) {
+  id: ID!
+  documentID: ID!
+  packID: ID!
+  document: Document! @connection(fields: ["documentID"])
+  pack: Pack! @connection(fields: ["packID"])
+}
+
+type Pack
+@model
+@key(name: "byTemplate", fields: ["templateID"])
+@auth(
+  rules: [
+    {
+      allow: owner
+      ownerField: "owner"
+      operations: [create, update, delete, read]
+    }
+  ]
+) {
+  id: ID!
+  name: String!
+  description: String
+
+  templateID: ID!
+  template: Template! @connection(fields: ["templateID"])
+
+  documents: [PackDocument] @connection(keyName: "byPack", fields: ["id"])
+
+  createdAt: String
+  updatedAt: String
+  owner: String
+}
+
+type Template
+@model
+@auth(
+  rules: [
+    {
+      allow: owner
+      ownerField: "owner"
+      operations: [create, update, delete, read]
+    }
+  ]
+) {
+  id: ID!
+  name: String!
+  description: String!
+  documentTypes: [String!]
+
+  packs: [Pack] @connection(keyName: "byTemplate", fields: ["id"])
+}
