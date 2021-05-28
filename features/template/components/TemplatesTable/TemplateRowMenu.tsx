@@ -16,8 +16,8 @@ type Props = {
 };
 
 export const TemplateRowMenu: FC<Props> = ({ template }) => {
-  const deleteTemplate = async (id) => {
-    await API.graphql({
+  const deleteTemplate = (id) => {
+    API.graphql({
       query: deleteTemplateMutation,
       variables: { input: { id } },
     });
