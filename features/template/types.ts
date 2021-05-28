@@ -1,9 +1,3 @@
-import { Document } from "../document";
+import { GetTemplateQuery } from "../../API";
 
-export type Template = {
-  id: string;
-  name: string;
-  documentList: Document[];
-  updatedAt: string;
-  createdAt: string;
-};
+export type Template = NonNullable<GetTemplateQuery["getTemplate"]>;
