@@ -1,6 +1,7 @@
-import { FC } from "react";
+import React, { FC } from "react";
 import { UserMenu } from "./UserMenu";
 import UserNav from "./UserNav";
+import { Auth } from "aws-amplify";
 
 const navItems = [
   {
@@ -17,6 +18,16 @@ const navItems = [
 ];
 
 export const Sidebar: FC = () => {
+  const logout = async () => {
+    try {
+      await Auth.signOut().then(() => {
+        location.reload();
+      });
+    } catch (error) {
+      console.log("error signing out: ", error);
+    }
+  };
+
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
       <div className="hidden lg:flex lg:flex-shrink-0 min-h-full">
@@ -30,8 +41,14 @@ export const Sidebar: FC = () => {
           </div>
           {/* User account dropdown */}
           <div className="h-0 flex-1 flex flex-col overflow-y-auto">
-            <UserMenu name={"Can Sirin"} />
+            <UserMenu />
             <UserNav items={navItems} />
+            <button
+              onClick={logout}
+              className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+            >
+              Log out
+            </button>
           </div>
         </div>
       </div>

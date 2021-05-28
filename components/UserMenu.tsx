@@ -1,14 +1,22 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu } from "@headlessui/react";
 import { SelectorIcon } from "@heroicons/react/outline";
-import React, { FC, Fragment } from "react";
+import { Auth } from "aws-amplify";
+import React, { FC, useEffect, useState } from "react";
 import { MenuItem } from "./MenuItem";
 import { OpenMenuTransition } from "./OpenMenuTransition";
 
-type Props = {
-  name: string;
-};
+export const UserMenu: FC = () => {
+  const [user, setUser] = useState(null);
 
-export const UserMenu: FC<Props> = ({ name }) => {
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    setUser(user);
+  };
+
   return (
     <Menu as="div" className="px-3 mt-6 relative inline-block text-left">
       {({ open }) => (
@@ -24,7 +32,7 @@ export const UserMenu: FC<Props> = ({ name }) => {
                   />
                   <span className="flex-1 flex flex-col min-w-0">
                     <span className="text-gray-900 text-sm font-medium truncate">
-                      {name}
+                      {user?.username}
                     </span>
                   </span>
                 </span>
@@ -43,6 +51,7 @@ export const UserMenu: FC<Props> = ({ name }) => {
               <div className="py-1">
                 <MenuItem href="/">Home</MenuItem>
                 <MenuItem href="documents/new">New Document</MenuItem>
+                <MenuItem href="#">Log out</MenuItem>
               </div>
             </Menu.Items>
           </OpenMenuTransition>
