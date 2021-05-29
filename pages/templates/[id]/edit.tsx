@@ -44,6 +44,13 @@ const EditTemplatePage = () => {
     setDocumentTypes(list);
   };
 
+  const onChange = (e) => {
+    setTemplate(() => ({
+      ...template,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   const handleInputChange = (e, id) => {
     const { value } = e.target;
     const list = documentTypes.map((doc) => {
@@ -60,7 +67,7 @@ const EditTemplatePage = () => {
     fetchTemplate();
   }, []);
 
-  const { name } = template || {};
+  const { name, description } = template || {};
   const editCurrentTemplate = async (e) => {
     e.preventDefault();
     if (!name) return;
@@ -69,7 +76,13 @@ const EditTemplatePage = () => {
       return doc.type;
     });
 
-    const updatedTemplate = { id, name, documentTypes: documentTypeList };
+    const updatedTemplate = {
+      id,
+      name,
+      description,
+      documentTypes: documentTypeList,
+    };
+
     const result = (await API.graphql({
       query: updateTemplate,
       variables: { input: updatedTemplate },
@@ -94,13 +107,36 @@ const EditTemplatePage = () => {
                 <div className="mt-1 rounded-md shadow-sm flex">
                   <input
                     type="text"
-                    name="templateName"
+                    name="name"
                     id="templateName"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
                     value={template?.name}
+                    onChange={onChange}
                   />
                 </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Description
+                </label>
+                <div className="mt-1">
+                  <textarea
+                    onChange={onChange}
+                    id="description"
+                    name="description"
+                    rows={3}
+                    className="shadow-sm focus:ring-light-blue-500 focus:border-light-blue-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
+                    placeholder="I am creating this template for H1B visa applications..."
+                    value={description}
+                  />
+                </div>
+                <p className="mt-2 text-sm text-gray-500">
+                  Brief description about the template.
+                </p>
               </div>
               <div>
                 <label
