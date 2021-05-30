@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { API } from "aws-amplify";
 import { getDocument } from "../../../graphql/queries";
-import { GetDocumentQuery } from "../../../API";
+import { GetDocumentQuery, UpdateDocumentMutation } from "../../../API";
 import { updateDocument } from "../../../graphql/mutations";
 
 const EditDocumentPage = () => {
@@ -39,17 +39,17 @@ const EditDocumentPage = () => {
     e.preventDefault();
     if (!name || !type) return;
     const updatedDocument = { id, name, type, description };
-    await API.graphql({
+    const result = (await API.graphql({
       query: updateDocument,
       variables: { input: updatedDocument },
-    });
+    })) as { data: UpdateDocumentMutation };
 
-    await router.push(`/documents/${id}`);
+    router.push(`/documents/${result.data.updateDocument.id}`);
   };
 
   return (
     <MainColumn pageTitle="Edit Your Document">
-      <form className="divide-y divide-gray-200 lg:col-span-9" method="POST">
+      <form className="divide-y divide-gray-200 lg:col-span-9">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">

@@ -15,14 +15,14 @@ const navItems = [
     current: false,
   },
   { name: "New Template", href: "/templates/new", current: false },
+  { name: "New Pack", href: "/packages/new", current: false },
 ];
 
 export const Sidebar: FC = () => {
-  const logout = async () => {
+  const logout = () => {
     try {
-      await Auth.signOut().then(() => {
-        location.reload();
-      });
+      Auth.signOut();
+      location.reload();
     } catch (error) {
       console.log("error signing out: ", error);
     }

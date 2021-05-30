@@ -10,16 +10,14 @@ import { FC, Fragment } from "react";
 import { Document } from "../../types";
 import { API } from "aws-amplify";
 import { deleteDocument as deleteDocumentMutation } from "../../../../graphql/mutations";
-import { listDocuments } from "../../../../graphql/queries";
-import { ListDocumentsQuery } from "../../../../API";
 
 type Props = {
   document: Document;
 };
 
 export const DocumentRowMenu: FC<Props> = ({ document }) => {
-  const deleteDocument = async (id) => {
-    await API.graphql({
+  const deleteDocument = (id) => {
+    API.graphql({
       query: deleteDocumentMutation,
       variables: { input: { id } },
     });

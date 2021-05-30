@@ -6,6 +6,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import { v4 as uuidv4 } from "uuid";
 import { API } from "aws-amplify";
 import { createDocument } from "../../graphql/mutations";
+import { CreateDocumentInput, CreateDocumentMutation } from "../../API";
 
 const initialValue = { id: "", name: "", type: "", description: "" };
 
@@ -13,6 +14,7 @@ const NewDocumentPage = () => {
   const [doc, setDoc] = useState(initialValue);
   const { name, type, description } = doc;
   const router = useRouter();
+
   const onChange = (e) => {
     setDoc(() => ({ ...doc, [e.target.name]: e.target.value }));
   };
@@ -21,14 +23,16 @@ const NewDocumentPage = () => {
     e.preventDefault();
     if (!name || !type) return;
 
-    doc.id = uuidv4();
-    await API.graphql({ query: createDocument, variables: { input: doc } });
-    await router.push(`/documents/${doc.id}`);
+    const result = (await API.graphql({
+      query: createDocument,
+      variables: { input: { ...doc, id: uuidv4() } as CreateDocumentInput },
+    })) as { data: CreateDocumentMutation };
+    router.push(`/documents/${result.data.createDocument.id}`);
   };
 
   return (
     <MainColumn pageTitle="Add New Document">
-      <form className="divide-y divide-gray-200 lg:col-span-9" method="POST">
+      <form className="divide-y divide-gray-200 lg:col-span-9">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
 import { API } from "aws-amplify";
 import { getTemplate } from "../../../graphql/queries";
-import { GetTemplateQuery } from "../../../API";
+import { GetTemplateQuery, UpdateTemplateMutation } from "../../../API";
 import { v4 as uuidv4 } from "uuid";
 import { updateTemplate } from "../../../graphql/mutations";
 
@@ -70,12 +70,12 @@ const EditTemplatePage = () => {
     });
 
     const updatedTemplate = { id, name, documentTypes: documentTypeList };
-    await API.graphql({
+    const result = (await API.graphql({
       query: updateTemplate,
       variables: { input: updatedTemplate },
-    });
+    })) as { data: UpdateTemplateMutation };
 
-    await router.push(`/templates/${id}`);
+    await router.push(`/templates/${result.data.updateTemplate.id}`);
   };
 
   return (
