@@ -23,5 +23,11 @@
       "dependsOn": [],
       "customAuth": false
     }
+  },
+  "storage": {
+    "docupackStorage": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }

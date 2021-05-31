@@ -33,6 +33,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# idea
+.idea
+
 #amplify
 amplify/\#current-cloud-backend
 amplify/.config/local-*

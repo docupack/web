@@ -113,7 +113,7 @@ export type Template = {
   id?: string,
   name?: string,
   description?: string,
-  documentTypes?: Array< string | null > | null,
+  documentTypes?: Array< string > | null,
   packs?: ModelPackConnection,
   createdAt?: string,
   updatedAt?: string,
@@ -220,7 +220,7 @@ export type CreateTemplateInput = {
   id?: string | null,
   name: string,
   description: string,
-  documentTypes?: Array< string | null > | null,
+  documentTypes?: Array< string > | null,
 };
 
 export type ModelTemplateConditionInput = {
@@ -236,7 +236,7 @@ export type UpdateTemplateInput = {
   id: string,
   name?: string | null,
   description?: string | null,
-  documentTypes?: Array< string | null > | null,
+  documentTypes?: Array< string > | null,
 };
 
 export type DeleteTemplateInput = {
@@ -422,7 +422,7 @@ export type CreatePackDocumentMutation = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -477,7 +477,7 @@ export type UpdatePackDocumentMutation = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -532,7 +532,7 @@ export type DeletePackDocumentMutation = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -567,7 +567,7 @@ export type CreatePackMutation = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -611,7 +611,7 @@ export type UpdatePackMutation = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -655,7 +655,7 @@ export type DeletePackMutation = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -693,7 +693,7 @@ export type CreateTemplateMutation = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
@@ -725,7 +725,7 @@ export type UpdateTemplateMutation = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
@@ -757,7 +757,7 @@ export type DeleteTemplateMutation = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
@@ -852,7 +852,7 @@ export type GetPackQuery = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -899,7 +899,7 @@ export type ListPacksQuery = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -926,7 +926,7 @@ export type GetTemplateQuery = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
@@ -961,7 +961,7 @@ export type ListTemplatesQuery = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -1096,7 +1096,7 @@ export type OnCreatePackDocumentSubscription = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -1146,7 +1146,7 @@ export type OnUpdatePackDocumentSubscription = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -1196,7 +1196,7 @@ export type OnDeletePackDocumentSubscription = {
         id: string,
         name: string,
         description: string,
-        documentTypes?: Array< string | null > | null,
+        documentTypes?: Array< string > | null,
         createdAt: string,
         updatedAt: string,
         owner?: string | null,
@@ -1230,7 +1230,7 @@ export type OnCreatePackSubscription = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -1273,7 +1273,7 @@ export type OnUpdatePackSubscription = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -1316,7 +1316,7 @@ export type OnDeletePackSubscription = {
       id: string,
       name: string,
       description: string,
-      documentTypes?: Array< string | null > | null,
+      documentTypes?: Array< string > | null,
       packs?:  {
         __typename: "ModelPackConnection",
         nextToken?: string | null,
@@ -1353,7 +1353,7 @@ export type OnCreateTemplateSubscription = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
@@ -1384,7 +1384,7 @@ export type OnUpdateTemplateSubscription = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
@@ -1415,7 +1415,7 @@ export type OnDeleteTemplateSubscription = {
     id: string,
     name: string,
     description: string,
-    documentTypes?: Array< string | null > | null,
+    documentTypes?: Array< string > | null,
     packs?:  {
       __typename: "ModelPackConnection",
       items?:  Array< {
