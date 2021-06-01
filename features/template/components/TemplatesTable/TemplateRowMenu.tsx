@@ -10,6 +10,7 @@ import { FC, Fragment } from "react";
 import { API } from "aws-amplify";
 import { Template } from "../../types";
 import { deleteTemplate as deleteTemplateMutation } from "../../../../graphql/mutations";
+import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
 
 type Props = {
   template: Template;
@@ -31,16 +32,7 @@ export const TemplateRowMenu: FC<Props> = ({ template }) => {
             <span className="sr-only">Open options</span>
             <DotsVerticalIcon className="w-5 h-5" aria-hidden="true" />
           </Menu.Button>
-          <Transition
-            show={open}
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
+          <OpenMenuTransition open={open}>
             <Menu.Items
               static
               className="mx-3 origin-top-right absolute right-7 top-0 w-48 mt-1 rounded-md shadow-lg z-10 bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none"
@@ -88,7 +80,7 @@ export const TemplateRowMenu: FC<Props> = ({ template }) => {
                 </Menu.Item>
               </div>
             </Menu.Items>
-          </Transition>
+          </OpenMenuTransition>
         </>
       )}
     </Menu>
