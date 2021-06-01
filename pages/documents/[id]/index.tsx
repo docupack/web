@@ -1,6 +1,6 @@
-import { API, Auth } from "aws-amplify";
-import { getDocument, listDocuments } from "../../../graphql/queries";
-import { GetDocumentQuery, ListDocumentsQuery } from "../../../API";
+import { API } from "aws-amplify";
+import { getDocument } from "../../../graphql/queries";
+import { GetDocumentQuery } from "../../../API";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -14,17 +14,16 @@ const Document = () => {
   const { id } = router.query;
 
   useEffect(() => {
+    const fetchDocument = async () => {
+      const documentData = (await API.graphql({
+        query: getDocument,
+        variables: { id },
+      })) as { data: GetDocumentQuery };
+
+      setDoc(documentData.data.getDocument);
+    };
     fetchDocument();
-  }, []);
-
-  const fetchDocument = async () => {
-    const documentData = (await API.graphql({
-      query: getDocument,
-      variables: { id },
-    })) as { data: GetDocumentQuery };
-
-    setDoc(documentData.data.getDocument);
-  };
+  }, [id]);
 
   return (
     <MainColumn pageTitle="View Your Document">

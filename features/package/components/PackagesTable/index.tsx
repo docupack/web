@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState } from "react";
-import { TemplatesTableRow } from "../../../template/components/TemplatesTable/TemplatesTableRow";
 import { API } from "aws-amplify";
 import { listPacks } from "../../../../graphql/queries";
 import { ListPacksQuery } from "../../../../API";

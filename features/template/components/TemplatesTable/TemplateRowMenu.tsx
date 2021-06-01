@@ -1,4 +1,4 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu } from "@headlessui/react";
 import {
   DotsVerticalIcon,
   PencilAltIcon,
@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/outline";
 import classNames from "classnames";
 import Link from "next/link";
-import { FC, Fragment } from "react";
+import { FC } from "react";
 import { API } from "aws-amplify";
 import { Template } from "../../types";
 import { deleteTemplate as deleteTemplateMutation } from "../../../../graphql/mutations";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const TemplateRowMenu: FC<Props> = ({ template }) => {
-  const deleteTemplate = (id) => {
+  const deleteTemplate = (id: string) => {
     API.graphql({
       query: deleteTemplateMutation,
       variables: { input: { id } },

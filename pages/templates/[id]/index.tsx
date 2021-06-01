@@ -14,17 +14,16 @@ const Template = () => {
   const { id } = router.query;
 
   useEffect(() => {
+    const fetchTemplate = async () => {
+      const templateData = (await API.graphql({
+        query: getTemplate,
+        variables: { id },
+      })) as { data: GetTemplateQuery };
+
+      setTemplate(templateData.data.getTemplate);
+    };
     fetchTemplate();
-  }, []);
-
-  const fetchTemplate = async () => {
-    const templateData = (await API.graphql({
-      query: getTemplate,
-      variables: { id },
-    })) as { data: GetTemplateQuery };
-
-    setTemplate(templateData.data.getTemplate);
-  };
+  }, [id]);
 
   return (
     <MainColumn pageTitle="View Your Template">
@@ -77,7 +76,7 @@ const Template = () => {
                   Document Type
                 </label>
                 <div className="mt-1 rounded-md shadow-sm flex">
-                  {template?.documentTypes.map((docType) => {
+                  {template?.documentTypes.map((docType: string) => {
                     return (
                       <Badge
                         size="sm"

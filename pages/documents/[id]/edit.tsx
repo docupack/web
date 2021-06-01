@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
@@ -12,21 +12,20 @@ const EditDocumentPage = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const fetchDocument = async () => {
-    const documentData = (await API.graphql({
-      query: getDocument,
-      variables: { id },
-    })) as { data: GetDocumentQuery };
-
-    setDoc(documentData.data.getDocument);
-  };
-
   useEffect(() => {
     if (!id) return;
+    const fetchDocument = async () => {
+      const documentData = (await API.graphql({
+        query: getDocument,
+        variables: { id },
+      })) as { data: GetDocumentQuery };
+
+      setDoc(documentData.data.getDocument);
+    };
     fetchDocument();
   }, [id]);
 
-  const onChange = (e) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setDoc(() => ({
       ...doc,
       [e.target.name]: e.target.value,
@@ -35,7 +34,9 @@ const EditDocumentPage = () => {
 
   const { name, description, type } = doc || {};
 
-  const updateCurrentDocument = async (e) => {
+  const updateCurrentDocument = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
     if (!name || !type) return;
     const updatedDocument = { id, name, type, description };
