@@ -1,13 +1,15 @@
 import { Layout } from "../components/Layout";
+import { AppProps } from "next/app";
 import "../styles/globals.css";
 import "../configureAmplify";
+import { FC } from "react";
 
-function MyApp({ Component, pageProps }) {
+const DocupackApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <Layout>
       <Component {...pageProps} />
     </Layout>
   );
-}
+};
 
-export default MyApp;
+export default DocupackApp;

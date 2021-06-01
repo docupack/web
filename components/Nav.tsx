@@ -1,7 +1,4 @@
-import { HomeIcon, ViewListIcon, ClockIcon } from "@heroicons/react/outline";
-import Link from "next/link";
-import type { FC, ReactNode } from "react";
-import React from "react";
+import type { FC } from "react";
 
 type Props = {
   navigation: NavItem[];
@@ -14,7 +11,7 @@ interface NavItem {
   icon: any;
 }
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 export const Nav: FC<Props> = ({ navigation }) => {

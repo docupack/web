@@ -1,12 +1,11 @@
 import { Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
+import { FC, Fragment } from "react";
 
 type Props = {
   open: boolean;
-  children: React.ReactNode;
 };
 
-export const OpenMenuTransition = ({ open, children }) => {
+export const OpenMenuTransition: FC<Props> = ({ open, children }) => {
   return (
     <Transition
       show={open}
