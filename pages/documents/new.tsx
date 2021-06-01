@@ -3,10 +3,8 @@ import MainColumn from "../../components/MainColumn";
 import DocumentUpload from "../../features/document/components/DocumentUpload";
 import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { v4 as uuidv4 } from "uuid";
-import { API, Storage } from "aws-amplify";
-import { createDocument } from "../../graphql/mutations";
-import { CreateDocumentInput, CreateDocumentMutation } from "../../API";
+import { useCreateDocument } from "../../features/document/hooks/useCreateDocument";
+import { useUploadDocument } from "../../features/document/hooks/useUploadDocument";
 
 const initialValue = { id: "", name: "", type: "", description: "" };
 
@@ -15,7 +13,8 @@ const NewDocumentPage = () => {
   const { name, type, description } = doc;
   const router = useRouter();
   const [file, setFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(null);
+  const [createDocument, createDocumentState] = useCreateDocument();
+  const [uploadDocument, uploadState] = useUploadDocument();
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setDoc(() => ({ ...doc, [e.target.name]: e.target.value }));
@@ -27,27 +26,12 @@ const NewDocumentPage = () => {
 
   const createNewDocument = async (e: FormEvent) => {
     e.preventDefault();
-    if (!name || !type) return;
-
-    const result = (await API.graphql({
-      query: createDocument,
-      variables: { input: { ...doc, id: uuidv4() } as CreateDocumentInput },
-    })) as { data: CreateDocumentMutation };
-
-    const uploaded = await uploadDocument(file);
-    router.push(`/documents/${result.data.createDocument.id}`);
-  };
-
-  const uploadDocument = async (doc: File) => {
-    if (!doc) return;
     try {
-      await Storage.put(doc.name, doc, {
-        progressCallback(progress: { loaded: number; total: number }) {
-          setUploadProgress(progress);
-        },
-      });
-    } catch (error) {
-      console.log("Error on uploading a document:", error);
+      const result = await createDocument(doc);
+      await uploadDocument(file);
+      router.push(`/documents/${result.id}`);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -124,8 +108,14 @@ const NewDocumentPage = () => {
 
               {/*Upload document*/}
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
-                <DocumentUpload onDrop={onDrop} progress={uploadProgress} />
+                <DocumentUpload
+                  onDrop={onDrop}
+                  progress={uploadState.progress}
+                />
               </div>
+              {createDocumentState.error && (
+                <div>{createDocumentState.error}</div>
+              )}
               {/*Action buttons*/}
               <div className="pt-5">
                 <div className="flex justify-start">

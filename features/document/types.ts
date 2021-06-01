@@ -1,7 +1,3 @@
-export type Document = {
-  id: string;
-  name: string;
-  type: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { GetDocumentQuery } from "../../API";
+
+export type Document = NonNullable<GetDocumentQuery["getDocument"]>;
