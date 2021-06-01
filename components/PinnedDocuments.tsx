@@ -6,6 +6,7 @@ import React, { FC, Fragment, useEffect, useState } from "react";
 import { API } from "aws-amplify";
 import { listDocuments } from "../graphql/queries";
 import { ListDocumentsQuery } from "../API";
+import { Document } from "../features/document";
 
 export const PinnedDocuments: FC = () => {
   const [documents, setDocuments] = useState([]);
@@ -23,6 +24,7 @@ export const PinnedDocuments: FC = () => {
   };
 
   const pinnedDocuments = documents.sort(() => 0.5 - Math.random()).slice(0, 3);
+  console.log(pinnedDocuments);
 
   return (
     <div className="px-4 mt-6 sm:px-6 lg:px-8">
@@ -59,7 +61,11 @@ export const PinnedDocuments: FC = () => {
   );
 };
 
-const PinnedDocumentMenu = ({ document }) => {
+type PinnedDocumentMenuProps = {
+  document: Document;
+};
+
+const PinnedDocumentMenu: FC<PinnedDocumentMenuProps> = ({ document }) => {
   return (
     <Menu as="div" className="flex-shrink-0 pr-2">
       {({ open }) => (

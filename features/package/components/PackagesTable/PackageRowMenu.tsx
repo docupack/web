@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const PackageRowMenu: FC<Props> = ({ pack }) => {
-  const deletePack = (id) => {
+  const deletePack = (id: string) => {
     API.graphql({
       query: deletePackMutation,
       variables: { input: { id } },

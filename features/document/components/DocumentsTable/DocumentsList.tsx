@@ -1,14 +1,15 @@
 import { ChevronRightIcon } from "@heroicons/react/solid";
 
-import React from "react";
+import { FC } from "react";
 import classNames from "classnames";
 import { Badge } from "../../../../components/Badge";
+import { Document } from "../../types";
 
 type Props = {
   documents: Document[];
 };
 
-const DocumentsList = ({ documents }) => {
+const DocumentsList: FC<Props> = ({ documents }) => {
   return (
     <div className="mt-10 sm:hidden">
       <div className="px-4 sm:px-6">

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MainColumn from "../../../components/MainColumn";
 import { Badge } from "../../../components/Badge";
-import { getPack, getTemplate } from "../../../graphql/queries";
-import { GetPackQuery, GetTemplateQuery } from "../../../API";
+import { getPack } from "../../../graphql/queries";
+import { GetPackQuery } from "../../../API";
 
 const Pack = () => {
   const [pack, setPack] = useState(null);
@@ -14,17 +14,16 @@ const Pack = () => {
   const { id } = router.query;
 
   useEffect(() => {
+    const fetchPack = async () => {
+      const packData = (await API.graphql({
+        query: getPack,
+        variables: { id },
+      })) as { data: GetPackQuery };
+
+      setPack(packData.data.getPack);
+    };
     fetchPack();
-  }, []);
-
-  const fetchPack = async () => {
-    const packData = (await API.graphql({
-      query: getPack,
-      variables: { id },
-    })) as { data: GetPackQuery };
-
-    setPack(packData.data.getPack);
-  };
+  }, [id]);
 
   return (
     <MainColumn pageTitle="View Your Template">
@@ -77,7 +76,7 @@ const Pack = () => {
                   Document Type
                 </label>
                 <div className="mt-1 rounded-md shadow-sm flex">
-                  {pack?.template.documentTypes.map((docType) => {
+                  {pack?.template.documentTypes.map((docType: string) => {
                     return (
                       <Badge
                         size="sm"

@@ -8,6 +8,7 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    node: true,
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -27,6 +28,7 @@ module.exports = {
     "react/no-direct-mutation-state": "error",
     "react/no-typos": "error",
     "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
   },
   settings: {
     react: {

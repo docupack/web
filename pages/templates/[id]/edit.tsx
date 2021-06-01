@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
 import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
@@ -16,20 +16,6 @@ const EditTemplatePage = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const fetchTemplate = async () => {
-    const templateData = (await API.graphql({
-      query: getTemplate,
-      variables: { id },
-    })) as { data: GetTemplateQuery };
-
-    setTemplate(templateData.data.getTemplate);
-    setDocumentTypes(
-      templateData.data.getTemplate.documentTypes.map((documentType) => {
-        return { id: uuidv4(), type: documentType };
-      })
-    );
-  };
-
   const addMoreDocumentTypes = () => {
     setDocumentTypes(
       documentTypes.concat({
@@ -39,21 +25,25 @@ const EditTemplatePage = () => {
     );
   };
 
+  type Doc = {
+    id: string;
+    type: string;
+  };
   const removeDocumentType = (id: string) => {
-    const list = documentTypes.filter((doc) => doc.id !== id);
+    const list = documentTypes.filter((doc: Doc) => doc.id !== id);
     setDocumentTypes(list);
   };
 
-  const onChange = (e) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTemplate(() => ({
       ...template,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleInputChange = (e, id) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
     const { value } = e.target;
-    const list = documentTypes.map((doc) => {
+    const list = documentTypes.map((doc: Doc) => {
       if (doc.id === id) {
         return { ...doc, type: value };
       }
@@ -64,15 +54,30 @@ const EditTemplatePage = () => {
   };
 
   useEffect(() => {
+    const fetchTemplate = async () => {
+      const templateData = (await API.graphql({
+        query: getTemplate,
+        variables: { id },
+      })) as { data: GetTemplateQuery };
+
+      setTemplate(templateData.data.getTemplate);
+      setDocumentTypes(
+        templateData.data.getTemplate.documentTypes.map((documentType) => {
+          return { id: uuidv4(), type: documentType };
+        })
+      );
+    };
     fetchTemplate();
-  }, []);
+  }, [id]);
 
   const { name, description } = template || {};
-  const editCurrentTemplate = async (e) => {
+  const editCurrentTemplate = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
     if (!name) return;
 
-    const documentTypeList = documentTypes.map((doc) => {
+    const documentTypeList = documentTypes.map((doc: Doc) => {
       return doc.type;
     });
 
@@ -150,7 +155,7 @@ const EditTemplatePage = () => {
                   />
                   {documentTypes?.length} document(s)
                 </label>
-                {documentTypes?.map((docType) => {
+                {documentTypes?.map((docType: Doc) => {
                   return (
                     <div
                       className="mt-3 rounded-md shadow-sm flex"

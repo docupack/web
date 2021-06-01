@@ -30,13 +30,11 @@ const NewPackagePage = () => {
     fetchTemplates();
   }, []);
 
-  const createNewPack = async (e) => {
+  const createNewPack = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const item = templates.filter((blueprint) => {
       return blueprint.name === template;
     });
-
-    console.log(item);
 
     const result = (await API.graphql({
       query: createPack,
@@ -51,11 +49,11 @@ const NewPackagePage = () => {
     router.push(`/packages/${result.data.createPack.id}`);
   };
 
-  const onOptionChange = (e) => {
+  const onOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTemplate(e.target.value);
   };
 
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPack(() => ({ ...pack, [e.target.name]: e.target.value }));
   };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import MainColumn from "../../components/MainColumn";
 import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
 import { v4 as uuidv4 } from "uuid";
@@ -7,7 +7,12 @@ import { API } from "aws-amplify";
 import { useRouter } from "next/router";
 import { CreateTemplateInput, CreateTemplateMutation } from "../../API";
 
-const initialValue = { id: "", name: "", description: "", documentTypes: [] };
+const initialValue = {
+  id: "",
+  name: "",
+  description: "",
+  documentTypes: [{ id: "", type: "" }],
+};
 
 const NewTemplatePage = () => {
   const [template, setTemplate] = useState(initialValue);
@@ -18,12 +23,12 @@ const NewTemplatePage = () => {
     setDocumentTypes(documentTypes.concat({ type: "", id: uuidv4() }));
   };
 
-  const removeDocumentType = (id) => {
+  const removeDocumentType = (id: string) => {
     const list = documentTypes.filter((doc) => doc.id !== id);
     setDocumentTypes(list);
   };
 
-  const handleListChange = (e, id) => {
+  const handleListChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
     const { value } = e.target;
     const list = documentTypes.map((doc) => {
       if (doc.id === id) {
@@ -34,11 +39,11 @@ const NewTemplatePage = () => {
     setDocumentTypes(list);
   };
 
-  const onChange = (e) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTemplate(() => ({ ...template, [e.target.name]: e.target.value }));
   };
 
-  const createNewTemplate = async (e) => {
+  const createNewTemplate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!name) return;
 

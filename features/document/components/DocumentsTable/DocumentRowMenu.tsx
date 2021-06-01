@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const DocumentRowMenu: FC<Props> = ({ document }) => {
-  const deleteDocument = (id) => {
+  const deleteDocument = (id: string) => {
     API.graphql({
       query: deleteDocumentMutation,
       variables: { input: { id } },
