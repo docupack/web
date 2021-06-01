@@ -1,23 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { TemplatesTableRow } from "./TemplatesTableRow";
-import { API } from "aws-amplify";
-import { listTemplates } from "../../../../graphql/queries";
-import { ListTemplatesQuery } from "../../../../API";
+import { useFetchTemplates } from "../../hooks/useFetchTemplates";
 
 export const TemplatesTable: FC = () => {
-  const [templates, setTemplates] = useState([]);
-
-  useEffect(() => {
-    fetchTemplates();
-  }, [templates]);
-
-  const fetchTemplates = async () => {
-    const templates = (await API.graphql({
-      query: listTemplates,
-    })) as { data: ListTemplatesQuery };
-
-    setTemplates(templates.data.listTemplates.items);
-  };
+  const [templates, templatesState] = useFetchTemplates();
 
   return (
     <div className="hidden mt-8 sm:block">
