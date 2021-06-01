@@ -39,7 +39,7 @@ const EditTemplatePage = () => {
     );
   };
 
-  const removeDocumentType = (id) => {
+  const removeDocumentType = (id: string) => {
     const list = documentTypes.filter((doc) => doc.id !== id);
     setDocumentTypes(list);
   };
