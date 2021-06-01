@@ -1,7 +1,3 @@
-export type Package = {
-  id: string;
-  name: string;
-  documentList: Document[];
-  updatedAt: string;
-  createdAt: string;
-};
+import { GetPackQuery } from "../../API";
+
+export type Pack = NonNullable<GetPackQuery["getPack"]>;
