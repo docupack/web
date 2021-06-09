@@ -4,7 +4,7 @@ import { ListTemplatesQuery } from "../../../API";
 import { useEffect, useState } from "react";
 import { Template } from "../types";
 
-export const useFetchTemplates = (): [
+export const useTemplates = (): [
   Template[],
   { error: Error | null; loading: boolean }
 ] => {
@@ -21,9 +21,8 @@ export const useFetchTemplates = (): [
       setTemplates(templateData.data.listTemplates.items);
       setLoading(false);
     } catch (e) {
-      console.log(e);
       setLoading(false);
-      setError(e.message);
+      setError(e);
     }
   };
 
