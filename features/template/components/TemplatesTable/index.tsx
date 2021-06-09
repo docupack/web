@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { TemplatesTableRow } from "./TemplatesTableRow";
-import { useFetchTemplates } from "../../hooks/useFetchTemplates";
+import { useTemplates } from "../../hooks/useTemplates";
 
 export const TemplatesTable: FC = () => {
-  const [templates, templatesState] = useFetchTemplates();
+  const [templates, templatesState] = useTemplates();
 
   return (
     <div className="hidden mt-8 sm:block">

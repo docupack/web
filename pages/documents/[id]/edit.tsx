@@ -1,29 +1,16 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { API } from "aws-amplify";
-import { getDocument } from "../../../graphql/queries";
-import { GetDocumentQuery, UpdateDocumentMutation } from "../../../API";
+import { UpdateDocumentMutation } from "../../../API";
 import { updateDocument } from "../../../graphql/mutations";
+import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
 
 const EditDocumentPage = () => {
-  const [doc, setDoc] = useState(null);
   const router = useRouter();
   const { id } = router.query;
-
-  useEffect(() => {
-    if (!id) return;
-    const fetchDocument = async () => {
-      const documentData = (await API.graphql({
-        query: getDocument,
-        variables: { id },
-      })) as { data: GetDocumentQuery };
-
-      setDoc(documentData.data.getDocument);
-    };
-    fetchDocument();
-  }, [id]);
+  const [doc, setDoc] = useFetchDocument(id);
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setDoc(() => ({

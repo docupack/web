@@ -1,23 +1,10 @@
-import React, { FC, useEffect, useState } from "react";
-import { API } from "aws-amplify";
-import { listPacks } from "../../../../graphql/queries";
-import { ListPacksQuery } from "../../../../API";
+import React, { FC } from "react";
 import { PackagesTableRow } from "./PackagesTableRow";
+import { usePackages } from "../../hooks/usePackages";
 
 export const PackagesTable: FC = () => {
-  const [packages, setPackages] = useState([]);
-
-  useEffect(() => {
-    fetchPackages();
-  });
-
-  const fetchPackages = async () => {
-    const packages = (await API.graphql({
-      query: listPacks,
-    })) as { data: ListPacksQuery };
-
-    setPackages(packages.data.listPacks.items);
-  };
+  const [packages] = usePackages();
+  console.log(packages);
 
   return (
     <div className="hidden mt-8 sm:block">
@@ -27,6 +14,9 @@ export const PackagesTable: FC = () => {
             <tr className="border-t border-gray-200">
               <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <span className="lg:pl-2">Packs</span>
+              </th>
+              <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Blueprint
               </th>
               <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Required Document Types

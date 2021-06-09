@@ -1,29 +1,14 @@
-import { API } from "aws-amplify";
-import { getDocument } from "../../../graphql/queries";
-import { GetDocumentQuery } from "../../../API";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import MainColumn from "../../../components/MainColumn";
 import { Badge } from "../../../components/Badge";
+import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
 
 const Document = () => {
-  const [doc, setDoc] = useState(null);
-
   const router = useRouter();
   const { id } = router.query;
-
-  useEffect(() => {
-    const fetchDocument = async () => {
-      const documentData = (await API.graphql({
-        query: getDocument,
-        variables: { id },
-      })) as { data: GetDocumentQuery };
-
-      setDoc(documentData.data.getDocument);
-    };
-    fetchDocument();
-  }, [id]);
+  const [doc] = useFetchDocument(id);
 
   return (
     <MainColumn pageTitle="View Your Document">
