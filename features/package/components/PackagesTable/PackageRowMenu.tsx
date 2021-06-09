@@ -8,21 +8,15 @@ import classNames from "classnames";
 import Link from "next/link";
 import { FC } from "react";
 import { Pack } from "../../types";
-import { API } from "aws-amplify";
-import { deletePack as deletePackMutation } from "../../../../graphql/mutations";
 import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
+import { useDeletePackage } from "../../hooks/useDeletePackage";
 
 type Props = {
   pack: Pack;
 };
 
 export const PackageRowMenu: FC<Props> = ({ pack }) => {
-  const deletePack = (id: string) => {
-    API.graphql({
-      query: deletePackMutation,
-      variables: { input: { id } },
-    });
-  };
+  const [deletePack] = useDeletePackage();
 
   return (
     <Menu as="div" className="relative flex justify-end items-center">
@@ -64,7 +58,7 @@ export const PackageRowMenu: FC<Props> = ({ pack }) => {
                   {({ active }) => (
                     <button
                       type="button"
-                      onClick={() => deletePack(pack.id)}
+                      onSubmit={() => deletePack(pack)}
                       className={classNames(
                         active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"

@@ -1,32 +1,17 @@
-import { API } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MainColumn from "../../../components/MainColumn";
 import { Badge } from "../../../components/Badge";
-import { getPack } from "../../../graphql/queries";
-import { GetPackQuery } from "../../../API";
+import { useFetchPackage } from "../../../features/package/hooks/useFetchPackage";
 
 const Pack = () => {
-  const [pack, setPack] = useState(null);
-
   const router = useRouter();
   const { id } = router.query;
 
-  useEffect(() => {
-    const fetchPack = async () => {
-      const packData = (await API.graphql({
-        query: getPack,
-        variables: { id },
-      })) as { data: GetPackQuery };
-
-      setPack(packData.data.getPack);
-    };
-    fetchPack();
-  }, [id]);
+  const [pack] = useFetchPackage(id);
 
   return (
-    <MainColumn pageTitle="View Your Template">
+    <MainColumn pageTitle="View Your Package">
       <div className="divide-y divide-gray-200 lg:col-span-9">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
@@ -94,7 +79,7 @@ const Pack = () => {
                   <div className="flex justify-start">
                     <button
                       onClick={() => {
-                        router.push(`/templates/${id}/edit`);
+                        router.push(`/packages/${id}/edit`);
                       }}
                       type="submit"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

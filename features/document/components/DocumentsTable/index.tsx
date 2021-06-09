@@ -1,23 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { DocumentsTableRow } from "./DocumentsTableRow";
-import { API } from "aws-amplify";
-import { listDocuments } from "../../../../graphql/queries";
-import { ListDocumentsQuery } from "../../../../API";
+import { useDocuments } from "../../hooks/useDocuments";
 
 export const DocumentsTable: FC = () => {
-  const [documents, setDocuments] = useState([]);
-
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const fetchDocuments = async () => {
-    const docs = (await API.graphql({
-      query: listDocuments,
-    })) as { data: ListDocumentsQuery };
-
-    setDocuments(docs.data.listDocuments.items);
-  };
+  const [documents] = useDocuments();
 
   return (
     <div className="hidden mt-8 sm:block">

@@ -2,42 +2,24 @@ import React, { ChangeEvent, useState } from "react";
 import MainColumn from "../../components/MainColumn";
 import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
 import { v4 as uuidv4 } from "uuid";
-import { createTemplate } from "../../graphql/mutations";
-import { API } from "aws-amplify";
 import { useRouter } from "next/router";
-import { CreateTemplateInput, CreateTemplateMutation } from "../../API";
+import { useCreateTemplate } from "../../features/template/hooks/useCreateTemplate";
+import { InputList } from "../../components/InputList";
+import { Input } from "../../components/Input";
 
 const initialValue = {
   id: "",
   name: "",
   description: "",
-  documentTypes: [{ id: "", type: "" }],
 };
 
 const NewTemplatePage = () => {
   const [template, setTemplate] = useState(initialValue);
   const [documentTypes, setDocumentTypes] = useState([]);
+  const [createTemplate, { error }] = useCreateTemplate();
+
   const router = useRouter();
-
-  const addMoreDocument = () => {
-    setDocumentTypes(documentTypes.concat({ type: "", id: uuidv4() }));
-  };
-
-  const removeDocumentType = (id: string) => {
-    const list = documentTypes.filter((doc) => doc.id !== id);
-    setDocumentTypes(list);
-  };
-
-  const handleListChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
-    const { value } = e.target;
-    const list = documentTypes.map((doc) => {
-      if (doc.id === id) {
-        return { ...doc, type: value };
-      }
-      return doc;
-    });
-    setDocumentTypes(list);
-  };
+  const { name, description } = template;
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTemplate(() => ({ ...template, [e.target.name]: e.target.value }));
@@ -45,29 +27,18 @@ const NewTemplatePage = () => {
 
   const createNewTemplate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log(template);
     if (!name) return;
-
-    const documentTypeList = documentTypes.map((doc) => {
-      return doc.type;
+    const result = await createTemplate({
+      ...template,
+      documentTypes,
     });
-
-    const result = (await API.graphql({
-      query: createTemplate,
-      variables: {
-        input: {
-          ...template,
-          id: uuidv4(),
-          documentTypes: documentTypeList,
-        } as CreateTemplateInput,
-      },
-    })) as { data: CreateTemplateMutation };
-    router.push(`/templates/${result.data.createTemplate.id}`);
+    router.push(`/templates/${result.id}`);
   };
 
-  const { name, description } = template;
   return (
     <MainColumn pageTitle="Create a template">
-      <form className="divide-y divide-gray-200 lg:col-span-9" method="POST">
+      <form className="divide-y divide-gray-200 lg:col-span-9">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
@@ -115,47 +86,13 @@ const NewTemplatePage = () => {
                   Brief description about the template.
                 </p>
               </div>
-              {/*Document Type*/}
-              <div>
-                <label
-                  htmlFor="documentType"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Document Type
-                  <PlusIcon
-                    className="inline-block ml-1 mr-0.5 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer"
-                    onClick={addMoreDocument}
-                  />
-                  {documentTypes.length} document(s)
-                </label>
-                {documentTypes.map((doc) => {
-                  return (
-                    <div
-                      className="mt-3 rounded-md shadow-sm flex"
-                      key={doc.id}
-                    >
-                      <input
-                        type="text"
-                        name="documentType"
-                        id="documentType"
-                        className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
-                        placeholder="Passport, visa..."
-                        onChange={(event) => {
-                          handleListChange(event, doc.id);
-                        }}
-                      />{" "}
-                      <MinusCircleIcon
-                        className="inline-block ml-1 mr-0.5 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer"
-                        onClick={() => removeDocumentType(doc.id)}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
+
+              <InputList onChange={setDocumentTypes} />
 
               {/*Action buttons*/}
               <div className="pt-5">
                 <div className="flex justify-start">
+                  <span>{error}</span>
                   <button
                     type="button"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
