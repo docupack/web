@@ -1,11 +1,9 @@
 import React, { ChangeEvent, useState } from "react";
 import MainColumn from "../../components/MainColumn";
-import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
-import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
 import { useCreateTemplate } from "../../features/template/hooks/useCreateTemplate";
 import { InputList } from "../../components/InputList";
-import { Input } from "../../components/Input";
+import { changeURLto } from "../../utils/changeURLto";
 
 const initialValue = {
   id: "",
@@ -33,7 +31,7 @@ const NewTemplatePage = () => {
       ...template,
       documentTypes,
     });
-    router.push(`/templates/${result.id}`);
+    await changeURLto(router, `/templates/${result.id}`);
   };
 
   return (
@@ -42,7 +40,7 @@ const NewTemplatePage = () => {
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Document Name*/}
+              {/*Template Name*/}
               <div>
                 <label
                   htmlFor="templateName"

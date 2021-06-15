@@ -5,16 +5,18 @@ import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { useCreateDocument } from "../../features/document/hooks/useCreateDocument";
 import { useUploadDocument } from "../../features/document/hooks/useUploadDocument";
+import { changeURLto } from "../../utils/changeURLto";
 
 const initialValue = { id: "", name: "", type: "", description: "" };
 
 const NewDocumentPage = () => {
   const [doc, setDoc] = useState(initialValue);
-  const { name, type, description } = doc;
-  const router = useRouter();
   const [file, setFile] = useState(null);
   const [createDocument, createDocumentState] = useCreateDocument();
   const [uploadDocument, uploadState] = useUploadDocument();
+
+  const { name, type, description } = doc;
+  const router = useRouter();
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setDoc(() => ({ ...doc, [e.target.name]: e.target.value }));
@@ -29,7 +31,7 @@ const NewDocumentPage = () => {
     try {
       const result = await createDocument(doc);
       await uploadDocument(file);
-      router.push(`/documents/${result.id}`);
+      await changeURLto(router, `/documents/${result.id}`);
     } catch (e) {
       console.log(e);
     }

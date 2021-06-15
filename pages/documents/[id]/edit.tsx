@@ -6,6 +6,7 @@ import { API } from "aws-amplify";
 import { UpdateDocumentMutation } from "../../../API";
 import { updateDocument } from "../../../graphql/mutations";
 import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
+import { changeURLto } from "../../../utils/changeURLto";
 
 const EditDocumentPage = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ const EditDocumentPage = () => {
       variables: { input: updatedDocument },
     })) as { data: UpdateDocumentMutation };
 
-    router.push(`/documents/${result.data.updateDocument.id}`);
+    await changeURLto(router, `/documents/${result.data.updateDocument.id}`);
   };
 
   return (

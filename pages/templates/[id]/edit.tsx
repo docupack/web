@@ -51,7 +51,7 @@ const EditTemplatePage = ({ template }: Props) => {
       variables: { input: updatedTemplate },
     })) as { data: UpdateTemplateMutation };
 
-    await router.push(`/templates/${result.data.updateTemplate.id}`);
+    await changeURLto(router, `/templates/${result.data.updateTemplate.id}`);
   };
 
   return (
