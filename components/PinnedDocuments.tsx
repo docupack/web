@@ -3,7 +3,7 @@ import { DotsVerticalIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
 import Link from "next/link";
 import React, { FC, Fragment } from "react";
-import { Document } from "../features/document";
+import { Docu } from "../features/document";
 import { useDocuments } from "../features/document/hooks/useDocuments";
 
 export const PinnedDocuments: FC = () => {
@@ -47,7 +47,7 @@ export const PinnedDocuments: FC = () => {
 };
 
 type PinnedDocumentMenuProps = {
-  document: Document;
+  document: Docu;
 };
 
 const PinnedDocumentMenu: FC<PinnedDocumentMenuProps> = ({ document }) => {

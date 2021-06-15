@@ -7,12 +7,12 @@ import {
 import classNames from "classnames";
 import Link from "next/link";
 import { FC } from "react";
-import { Document } from "../../types";
+import { Docu } from "../../types";
 import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
 import { useDeleteDocument } from "../../hooks/useDeleteDocument";
 
 type Props = {
-  document: Document;
+  document: Docu;
 };
 
 export const DocumentRowMenu: FC<Props> = ({ document }) => {
