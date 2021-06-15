@@ -34,7 +34,7 @@ export const PackagesTableRow: FC<Props> = ({ pack }) => {
       </td>
       <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
         {pack?.template.documentTypes.map((docType) => (
-          <Badge size="sm" bgColor="purple" textColor="gray" key={docType}>
+          <Badge size="sm" key={docType}>
             {docType}
           </Badge>
         ))}

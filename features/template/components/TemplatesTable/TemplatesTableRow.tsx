@@ -23,6 +23,9 @@ export const TemplatesTableRow: FC<Props> = ({ template }) => {
           <Link href={`/templates/${template.id}`}>
             <a className="truncate hover:text-gray-600">
               <span>{template.name}</span>
+              <div className="text-sm text-gray-500">
+                {template.description}
+              </div>
             </a>
           </Link>
         </div>

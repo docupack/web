@@ -2,11 +2,11 @@ import classNames from "classnames";
 import Link from "next/link";
 import React, { FC } from "react";
 import { Badge } from "../../../../components/Badge";
-import { Document } from "../../types";
+import { Docu } from "../../types";
 import { DocumentRowMenu } from "./DocumentRowMenu";
 
 type Props = {
-  document: Document;
+  document: Docu;
 };
 
 export const DocumentsTableRow: FC<Props> = ({ document }) => {
@@ -21,17 +21,18 @@ export const DocumentsTableRow: FC<Props> = ({ document }) => {
             aria-hidden="true"
           />
           <Link href={`/documents/${document.id}`}>
-            <a className="truncate hover:text-gray-600">
+            <a className="truncate hover:text-gray-800">
               <span>{document.name}</span>
+              <div className="text-sm text-gray-500">
+                {document.description}
+              </div>
             </a>
           </Link>
         </div>
       </td>
       <td className="px-6 py-3 text-sm text-gray-500 whitespace-nowrap font-medium">
         <div className="flex items-center space-x-2">
-          <Badge size="sm" bgColor="blue" textColor="blue">
-            {document.type}
-          </Badge>
+          <Badge size="sm">{document.type}</Badge>
         </div>
       </td>
       <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
