@@ -2,11 +2,13 @@ import { API } from "aws-amplify";
 import { deleteDocument as deleteDocumentMutation } from "../../../graphql/mutations";
 import { useState } from "react";
 import { DeleteDocumentInput } from "../../../API";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
-const deleteDocument = async (id: string) => {
-  API.graphql({
+const deleteDocument = async (api: typeof API, id: string) => {
+  api.graphql({
     query: deleteDocumentMutation,
     variables: { input: { id } },
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
   });
 };
 
@@ -22,7 +24,7 @@ export const useDeleteDocument = (): [
     setError(null);
 
     try {
-      const result = await deleteDocument(doc.id);
+      const result = await deleteDocument(API, doc.id);
       setLoading(false);
       return result;
     } catch (error) {

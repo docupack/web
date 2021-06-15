@@ -2,11 +2,13 @@ import { API } from "aws-amplify";
 import { deletePack as deletePackMutation } from "../../../graphql/mutations";
 import { useState } from "react";
 import { DeletePackInput } from "../../../API";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
 const removePack = async (id: string) => {
   API.graphql({
     query: deletePackMutation,
     variables: { input: { id } },
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
   });
 };
 

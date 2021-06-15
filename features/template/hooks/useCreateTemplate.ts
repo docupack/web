@@ -3,6 +3,7 @@ import { API } from "aws-amplify";
 import { createTemplate as createTemplateMutation } from "../../../graphql/mutations";
 import { v4 as uuidv4 } from "uuid";
 import { CreateTemplateInput, CreateTemplateMutation } from "../../../API";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
 const create = async (template: CreateTemplateInput) => {
   if (!template.name) return;
@@ -15,6 +16,7 @@ const create = async (template: CreateTemplateInput) => {
         id: uuidv4(),
       } as CreateTemplateInput,
     },
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
   })) as { data: CreateTemplateMutation };
 
   return result.data.createTemplate;

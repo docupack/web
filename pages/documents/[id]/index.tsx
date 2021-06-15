@@ -1,22 +1,24 @@
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import React from "react";
-import { useRouter } from "next/router";
+import React, { FC } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { Badge } from "../../../components/Badge";
-import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
+import { fetchDocument } from "../../../features/document/hooks/useFetchDocument";
+import { withSSRContext } from "aws-amplify";
+import { GetServerSideProps } from "next";
+import { Docu } from "../../../features/document";
 
-const Document = () => {
-  const router = useRouter();
-  const { id } = router.query;
-  const [doc] = useFetchDocument(id);
+type Props = {
+  doc: Docu;
+};
 
+const SingularDocument: FC<Props> = ({ doc }) => {
   return (
     <MainColumn pageTitle="View Your Document">
       <div className="divide-y divide-gray-200 lg:col-span-9">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Document Name*/}
+              {/*Docu Name*/}
               <div>
                 <label
                   htmlFor="documentName"
@@ -40,7 +42,7 @@ const Document = () => {
                   htmlFor="description"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Description
+                  Document Description
                 </label>
                 <div className="mt-1">
                   <p
@@ -52,7 +54,7 @@ const Document = () => {
                   </p>
                 </div>
               </div>
-              {/*Document Type*/}
+              {/*Docu Type*/}
               <div>
                 <label
                   htmlFor="documentType"
@@ -74,26 +76,16 @@ const Document = () => {
   );
 };
 
-// export const getStaticPaths = async () => {
-//   const documentData = (await API.graphql({ query: listDocuments })) as {
-//     data: ListDocumentsQuery;
-//   };
-//   const paths = documentData.data.listDocuments.items.map((doc) => ({
-//     params: { id: doc.id },
-//   }));
-//   return { paths, fallback: true };
-// };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { API } = withSSRContext(context);
+  const { id } = context.params;
+  const doc = await fetchDocument(API, id);
 
-// export const getServerSideProps = async (context) => {
-//   const { Auth } = withSSRContext(context);
-//   const user = await Auth.currentAuthenticatedUser();
-//   console.log(user, "user");
-//   const { id } = context.params;
-//   return {
-//     props: {
-//       doc: documentData.data.getDocument,
-//     },
-//   };
-// };
+  return {
+    props: {
+      doc,
+    },
+  };
+};
 
-export default withAuthenticator(Document);
+export default withAuthenticator(SingularDocument);

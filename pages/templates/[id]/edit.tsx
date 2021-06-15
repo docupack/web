@@ -1,91 +1,49 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import MainColumn from "../../../components/MainColumn";
 import { useRouter } from "next/router";
-import { MinusCircleIcon, PlusIcon } from "@heroicons/react/solid";
-import { API } from "aws-amplify";
-import { getTemplate } from "../../../graphql/queries";
-import { GetTemplateQuery, UpdateTemplateMutation } from "../../../API";
-import { v4 as uuidv4 } from "uuid";
+import { API, withSSRContext } from "aws-amplify";
+import { UpdateTemplateMutation } from "../../../API";
 import { updateTemplate } from "../../../graphql/mutations";
+import { fetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
+import { InputList } from "../../../components/InputList";
+import { changeURLto } from "../../../utils/changeURLto";
+import { GetServerSideProps } from "next";
+import { Template } from "../../../features/template";
 
-const EditTemplatePage = () => {
-  const [template, setTemplate] = useState(null);
-  const [documentTypes, setDocumentTypes] = useState(
-    template?.documentTypes ?? []
-  );
+type Props = {
+  template: Template;
+};
+
+const EditTemplatePage = ({ template }: Props) => {
   const router = useRouter();
   const { id } = router.query;
+  const [updatedTemplate, setUpdatedTemplate] = useState(null);
+  const [documentTypes, setDocumentTypes] = useState([]);
 
-  const addMoreDocumentTypes = () => {
-    setDocumentTypes(
-      documentTypes.concat({
-        id: uuidv4(),
-        type: "",
-      })
-    );
-  };
-
-  type Doc = {
-    id: string;
-    type: string;
-  };
-  const removeDocumentType = (id: string) => {
-    const list = documentTypes.filter((doc: Doc) => doc.id !== id);
-    setDocumentTypes(list);
-  };
+  useEffect(() => {
+    setUpdatedTemplate(template);
+    setDocumentTypes(template.documentTypes);
+  }, [template]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setTemplate(() => ({
-      ...template,
+    setUpdatedTemplate(() => ({
+      ...updatedTemplate,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
-    const { value } = e.target;
-    const list = documentTypes.map((doc: Doc) => {
-      if (doc.id === id) {
-        return { ...doc, type: value };
-      }
-      return doc;
-    });
-
-    setDocumentTypes(list);
-  };
-
-  useEffect(() => {
-    const fetchTemplate = async () => {
-      const templateData = (await API.graphql({
-        query: getTemplate,
-        variables: { id },
-      })) as { data: GetTemplateQuery };
-
-      setTemplate(templateData.data.getTemplate);
-      setDocumentTypes(
-        templateData.data.getTemplate.documentTypes.map((documentType) => {
-          return { id: uuidv4(), type: documentType };
-        })
-      );
-    };
-    fetchTemplate();
-  }, [id]);
-
-  const { name, description } = template || {};
+  const { name, description } = updatedTemplate || {};
   const editCurrentTemplate = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
     if (!name) return;
 
-    const documentTypeList = documentTypes.map((doc: Doc) => {
-      return doc.type;
-    });
-
     const updatedTemplate = {
       id,
       name,
       description,
-      documentTypes: documentTypeList,
+      documentTypes,
     };
 
     const result = (await API.graphql({
@@ -116,7 +74,7 @@ const EditTemplatePage = () => {
                     id="templateName"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
-                    value={template?.name}
+                    value={name}
                     onChange={onChange}
                   />
                 </div>
@@ -143,44 +101,7 @@ const EditTemplatePage = () => {
                   Brief description about the template.
                 </p>
               </div>
-              <div>
-                <label
-                  htmlFor="documentType"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Document Type
-                  <PlusIcon
-                    className="inline-block ml-1 mr-0.5 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer"
-                    onClick={addMoreDocumentTypes}
-                  />
-                  {documentTypes?.length} document(s)
-                </label>
-                {documentTypes?.map((docType: Doc) => {
-                  return (
-                    <div
-                      className="mt-3 rounded-md shadow-sm flex"
-                      key={docType.id}
-                    >
-                      <MinusCircleIcon
-                        className="inline-block mr-2 flex-shrink-0 self-center h-7 w-7 text-purple-500 cursor-pointer"
-                        onClick={() => removeDocumentType(docType.id)}
-                      />
-                      <input
-                        type="text"
-                        name="documentType"
-                        id="documentType"
-                        value={docType.type}
-                        className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
-                        placeholder="Passport, visa..."
-                        onChange={(event) => {
-                          handleInputChange(event, docType.id);
-                        }}
-                      />{" "}
-                    </div>
-                  );
-                })}
-              </div>
-
+              <InputList onChange={setDocumentTypes} inputs={documentTypes} />
               {/*Action buttons*/}
               <div className="pt-5">
                 <div className="flex justify-start">
@@ -208,3 +129,17 @@ const EditTemplatePage = () => {
 };
 
 export default EditTemplatePage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  //
+  const { API } = withSSRContext(context);
+  const { id } = context.params;
+
+  const template = await fetchTemplate(API, id);
+
+  return {
+    props: {
+      template,
+    },
+  };
+};

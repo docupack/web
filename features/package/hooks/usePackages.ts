@@ -3,6 +3,16 @@ import { listPacks } from "../../../graphql/queries";
 import { ListPacksQuery } from "../../../API";
 import { useEffect, useState } from "react";
 import { Pack } from "../types";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+
+export const fetchPackages = async (api: typeof API): Promise<Pack[]> => {
+  const packagesData = (await api.graphql({
+    query: listPacks,
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+  })) as { data: ListPacksQuery };
+
+  return packagesData.data.listPacks.items;
+};
 
 export const usePackages = (): [
   Pack[],
@@ -12,13 +22,10 @@ export const usePackages = (): [
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchPackages = async () => {
-    const packagesData = (await API.graphql({
-      query: listPacks,
-    })) as { data: ListPacksQuery };
-
+  const getPackages = async () => {
     try {
-      setPackages(packagesData.data.listPacks.items);
+      const packagesData = await fetchPackages(API);
+      setPackages(packagesData);
       setLoading(false);
     } catch (e) {
       setLoading(false);
@@ -27,7 +34,7 @@ export const usePackages = (): [
   };
 
   useEffect(() => {
-    fetchPackages();
+    getPackages();
   }, []);
 
   return [packages, { error, loading }];

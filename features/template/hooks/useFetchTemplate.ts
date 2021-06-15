@@ -3,6 +3,20 @@ import { API } from "aws-amplify";
 import { getTemplate } from "../../../graphql/queries";
 import { GetTemplateQuery } from "../../../API";
 import { Template } from "../types";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+
+export const fetchTemplate = async (
+  api: typeof API,
+  id: string | string[]
+): Promise<Template> => {
+  const templateData = (await api.graphql({
+    query: getTemplate,
+    variables: { id },
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+  })) as { data: GetTemplateQuery };
+
+  return templateData.data.getTemplate;
+};
 
 export const useFetchTemplate = (
   id: string | string[]
@@ -11,24 +25,20 @@ export const useFetchTemplate = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchTemplate = async (id: string | string[]) => {
-      const templateData = (await API.graphql({
-        query: getTemplate,
-        variables: { id },
-      })) as { data: GetTemplateQuery };
-
-      try {
-        setTemplate(templateData.data.getTemplate);
-        setLoading(false);
-      } catch (e) {
-        setLoading(false);
-        setError(e);
-      }
-    };
-    if (id) {
-      fetchTemplate(id);
+  const getDocument = async (id: string | string[]) => {
+    setLoading(true);
+    try {
+      const templateData = await fetchTemplate(API, id);
+      setTemplate(templateData);
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      setError(e);
     }
+  };
+
+  useEffect(() => {
+    getDocument(id);
   }, [id]);
 
   return [template, { error, loading }];

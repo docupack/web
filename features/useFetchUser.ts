@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 
 export interface AuthUser {
@@ -10,6 +10,7 @@ export interface AuthUser {
 
 export const useFetchUser = (): [
   AuthUser,
+  Dispatch<React.SetStateAction<AuthUser>>,
   { error: Error | null; loading: boolean }
 ] => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -30,5 +31,5 @@ export const useFetchUser = (): [
     asyncEffect();
   }, []);
 
-  return [user, { loading, error }];
+  return [user, setUser, { loading, error }];
 };

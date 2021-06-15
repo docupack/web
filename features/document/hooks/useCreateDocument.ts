@@ -3,13 +3,15 @@ import { createDocument as createDocumentMutation } from "../../../graphql/mutat
 import { v4 as uuidv4 } from "uuid";
 import { CreateDocumentInput, CreateDocumentMutation } from "../../../API";
 import { useState } from "react";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
-const createDocument = async (doc: CreateDocumentInput) => {
+const createDocument = async (api: typeof API, doc: CreateDocumentInput) => {
   if (!doc.name || !doc.type) return;
 
-  const result = (await API.graphql({
+  const result = (await api.graphql({
     query: createDocumentMutation,
     variables: { input: { ...doc, id: uuidv4() } as CreateDocumentInput },
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
   })) as { data: CreateDocumentMutation };
 
   return result.data.createDocument;
@@ -29,7 +31,7 @@ export const useCreateDocument = (): [
     setError(null);
 
     try {
-      const result = await createDocument(doc);
+      const result = await createDocument(API, doc);
       setLoading(false);
       return result;
     } catch (error) {
