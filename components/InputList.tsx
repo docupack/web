@@ -37,9 +37,8 @@ export const InputList: FC<Props> = ({ onChange, inputs }) => {
     } else {
       initialInputs = generateInputConfig(inputs);
     }
-
     setList(initialInputs);
-  }, [inputs]);
+  }, [inputs, list.length]);
 
   const addMoreInputField = () => {
     const inputFields = list.concat(emptyInput());
@@ -58,6 +57,7 @@ export const InputList: FC<Props> = ({ onChange, inputs }) => {
         return i.value;
       })
     );
+    if (list.length === 1) return;
     setList(inputFields);
   };
 
@@ -90,7 +90,6 @@ export const InputList: FC<Props> = ({ onChange, inputs }) => {
         />
       </label>
       {list.map((i) => {
-        console.log(i, "iconfing");
         return (
           <div className="mt-3 rounded-md shadow-sm flex" key={i.id}>
             <Input
@@ -99,7 +98,6 @@ export const InputList: FC<Props> = ({ onChange, inputs }) => {
               onChange={handleListChange}
               onRemove={removeInputField}
               id={i.id}
-              key={i.id}
               placeholder="Passport, visa..."
             />
           </div>
