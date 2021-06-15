@@ -4,10 +4,10 @@ import classNames from "classnames";
 import Link from "next/link";
 import React, { FC, Fragment } from "react";
 import { Docu } from "../features/document";
-import { useDocuments } from "../features/document/hooks/useDocuments";
+import { useFetchDocuments } from "../features/document/hooks/useFetchDocuments";
 
 export const PinnedDocuments: FC = () => {
-  const [documents] = useDocuments();
+  const [documents] = useFetchDocuments();
 
   const pinnedDocuments = documents.sort(() => 0.5 - Math.random()).slice(0, 3);
 

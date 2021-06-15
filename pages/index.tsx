@@ -7,8 +7,8 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { withSSRContext } from "aws-amplify";
 import { fetchTemplates } from "../features/template/hooks/useTemplates";
-import { fetchDocuments } from "../features/document/hooks/useDocuments";
-import { fetchPackages } from "../features/package/hooks/usePackages";
+import { fetchDocuments } from "../features/document/hooks/useFetchDocuments";
+import { fetchPackages } from "../features/package/hooks/useFetchPackages";
 
 const HomePage = ({
   data,

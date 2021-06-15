@@ -25,7 +25,6 @@ const NewTemplatePage = () => {
 
   const createNewTemplate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(template);
     if (!name) return;
     const result = await createTemplate({
       ...template,

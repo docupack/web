@@ -14,7 +14,7 @@ export const fetchPackages = async (api: typeof API): Promise<Pack[]> => {
   return packagesData.data.listPacks.items;
 };
 
-export const usePackages = (): [
+export const useFetchPackages = (): [
   Pack[],
   { error: Error | null; loading: boolean }
 ] => {

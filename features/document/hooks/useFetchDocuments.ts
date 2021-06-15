@@ -14,7 +14,7 @@ export const fetchDocuments = async (api: typeof API): Promise<Docu[]> => {
   return documentsData.data.listDocuments.items;
 };
 
-export const useDocuments = (): [
+export const useFetchDocuments = (): [
   Docu[],
   { error: Error | null; loading: boolean }
 ] => {
