@@ -1,10 +1,10 @@
 import { Menu, Transition } from "@headlessui/react";
-import { DotsVerticalIcon } from "@heroicons/react/outline";
+import { DotsVerticalIcon, StarIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
 import Link from "next/link";
 import React, { FC, Fragment } from "react";
-import { Docu } from "../features/document";
-import { useFetchDocuments } from "../features/document/hooks/useFetchDocuments";
+import { useFetchDocuments } from "../../features/document/hooks/useFetchDocuments";
+import { Document } from "../../features/document";
 
 export const PinnedDocuments: FC = () => {
   const [documents] = useFetchDocuments();
@@ -13,7 +13,11 @@ export const PinnedDocuments: FC = () => {
 
   return (
     <div className="px-4 mt-6 sm:px-6 lg:px-8">
-      <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+      <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide group flex items-center px-4 py-2 text-sm">
+        <StarIcon
+          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+          aria-hidden="true"
+        />
         Pinned Documents
       </h2>
       <ul className="mt-3 grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4">
@@ -47,7 +51,7 @@ export const PinnedDocuments: FC = () => {
 };
 
 type PinnedDocumentMenuProps = {
-  document: Docu;
+  document: Document;
 };
 
 const PinnedDocumentMenu: FC<PinnedDocumentMenuProps> = ({ document }) => {

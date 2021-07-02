@@ -1,23 +1,38 @@
-import React, { FC } from "react";
-import { UserMenu } from "./UserMenu";
-import Nav from "./Nav";
+import React, { FC, useEffect, useState } from "react";
+import { UserMenu } from "../UserMenu";
+import { Nav } from "../Nav";
+import { fetchUser } from "../../features/useFetchUser";
+import { Auth } from "aws-amplify";
 
-const navItems = [
+const authenticated = [
   {
     name: "Home",
     href: "/",
     current: true,
   },
   {
-    name: "New Document",
-    href: "/documents/new",
+    name: "Documents",
+    href: "/documents",
     current: false,
   },
-  { name: "New Template", href: "/templates/new", current: false },
-  { name: "New Pack", href: "/packages/new", current: false },
+  { name: "Templates", href: "/templates", current: false },
+  { name: "Packs", href: "/packages", current: false },
+  { name: "Settings", href: "/profile-settings", current: false },
 ];
 
 export const Sidebar: FC = () => {
+  const [user, setUser] = useState(null);
+  const navItems = authenticated;
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const user = await fetchUser(Auth);
+    setUser(user);
+  };
+  if (!user) return null;
+
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
       <div className="hidden lg:flex lg:flex-shrink-0 min-h-full">
