@@ -14,7 +14,7 @@ export const fetchTemplates = async (api: typeof API): Promise<Template[]> => {
   return templateData.data.listTemplates.items;
 };
 
-export const useTemplates = (): [
+export const useFetchTemplates = (): [
   Template[],
   { error: Error | null; loading: boolean }
 ] => {
