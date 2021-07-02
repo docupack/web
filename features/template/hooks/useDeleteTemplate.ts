@@ -1,11 +1,14 @@
 import { API } from "aws-amplify";
-import { deleteTemplate as deleteTemplateMutation } from "../../../graphql/mutations";
+import {
+  deleteTemplate,
+  deleteTemplate as deleteTemplateMutation,
+} from "../../../graphql/mutations";
 import { useState } from "react";
 import { DeleteTemplateInput } from "../../../API";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
 const removeTemplate = async (id: string) => {
-  API.graphql({
+  return API.graphql({
     query: deleteTemplateMutation,
     variables: { input: { id } },
     authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
@@ -13,7 +16,7 @@ const removeTemplate = async (id: string) => {
 };
 
 export const useDeleteTemplate = (): [
-  (template: DeleteTemplateInput) => Promise<void | null>,
+  (template: DeleteTemplateInput) => ReturnType<typeof deleteTemplate>,
   { error: Error; loading: boolean }
 ] => {
   const [error, setError] = useState<Error | null>(null);
@@ -30,7 +33,7 @@ export const useDeleteTemplate = (): [
     } catch (error) {
       setLoading(false);
       setError(error);
-      return null;
+      throw error;
     }
   };
 
