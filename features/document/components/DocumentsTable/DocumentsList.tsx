@@ -1,11 +1,12 @@
 import { ChevronRightIcon } from "@heroicons/react/solid";
 import { FC } from "react";
 import classNames from "classnames";
-import { Badge } from "../../../../components/Badge";
-import { Docu } from "../../types";
+import { Badge } from "../../../../components";
+import { Document } from "../../types";
+import { Color } from "../../../../utils/color";
 
 type Props = {
-  documents: Docu[];
+  documents: Document[];
 };
 
 const DocumentsList: FC<Props> = ({ documents }) => {
@@ -34,7 +35,9 @@ const DocumentsList: FC<Props> = ({ documents }) => {
                   {doc.name}
                 </span>
               </span>
-              <Badge size="sm">{doc.type}</Badge>
+              <Badge size="sm" bgColor={Color.Purple} textColor={Color.Gray}>
+                {doc.type}
+              </Badge>
               <ChevronRightIcon
                 className="ml-4 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                 aria-hidden="true"
