@@ -1,29 +1,17 @@
-import { API } from "aws-amplify";
+import { withSSRContext } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MainColumn from "../../../components/MainColumn";
 import { Badge } from "../../../components/Badge";
-import { getTemplate } from "../../../graphql/queries";
-import { GetTemplateQuery } from "../../../API";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { fetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
+import { changeURLto } from "../../../utils/changeURLto";
 
-const Template = () => {
-  const [template, setTemplate] = useState(null);
-
+const TemplatePage = ({
+  template,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { id } = router.query;
-
-  useEffect(() => {
-    const fetchTemplate = async () => {
-      const templateData = (await API.graphql({
-        query: getTemplate,
-        variables: { id },
-      })) as { data: GetTemplateQuery };
-
-      setTemplate(templateData.data.getTemplate);
-    };
-    fetchTemplate();
-  }, [id]);
 
   return (
     <MainColumn pageTitle="View Your Template">
@@ -31,7 +19,7 @@ const Template = () => {
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Document Name*/}
+              {/*Docu Name*/}
               <div>
                 <label
                   htmlFor="templateName"
@@ -67,7 +55,7 @@ const Template = () => {
                   </p>
                 </div>
               </div>
-              {/*Document Type*/}
+              {/*Docu Type*/}
               <div>
                 <label
                   htmlFor="documentType"
@@ -94,7 +82,7 @@ const Template = () => {
                   <div className="flex justify-start">
                     <button
                       onClick={() => {
-                        router.push(`/templates/${id}/edit`);
+                        changeURLto(router, `/templates/${id}/edit`);
                       }}
                       type="submit"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -112,26 +100,17 @@ const Template = () => {
   );
 };
 
-// export const getStaticPaths = async () => {
-//   const documentData = (await API.graphql({ query: listDocuments })) as {
-//     data: ListDocumentsQuery;
-//   };
-//   const paths = documentData.data.listDocuments.items.map((doc) => ({
-//     params: { id: doc.id },
-//   }));
-//   return { paths, fallback: true };
-// };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { API } = withSSRContext(context);
+  const { id } = context.params;
+  const template = await fetchTemplate(API, id);
+  if (!template) return { notFound: true };
 
-// export const getServerSideProps = async (context) => {
-//   const { Auth } = withSSRContext(context);
-//   const user = await Auth.currentAuthenticatedUser();
-//   console.log(user, "user");
-//   const { id } = context.params;
-//   return {
-//     props: {
-//       doc: documentData.data.getDocument,
-//     },
-//   };
-// };
+  return {
+    props: {
+      template,
+    },
+  };
+};
 
-export default withAuthenticator(Template);
+export default withAuthenticator(TemplatePage);

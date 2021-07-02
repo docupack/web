@@ -20,7 +20,7 @@ export const PackagesTableRow: FC<Props> = ({ pack }) => {
             )}
             aria-hidden="true"
           />
-          <Link href={`/templates/${pack.id}`}>
+          <Link href={`/packages/${pack.id}`}>
             <a className="truncate hover:text-gray-600">
               <span>{pack.name}</span>
             </a>
@@ -28,8 +28,13 @@ export const PackagesTableRow: FC<Props> = ({ pack }) => {
         </div>
       </td>
       <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+        <Link href={`/templates/${pack.template.id}`}>
+          <span>{pack?.template.name}</span>
+        </Link>
+      </td>
+      <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
         {pack?.template.documentTypes.map((docType) => (
-          <Badge size="sm" bgColor="purple" textColor="gray" key={docType}>
+          <Badge size="sm" key={docType}>
             {docType}
           </Badge>
         ))}

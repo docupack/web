@@ -2,29 +2,14 @@ import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
 import Link from "next/link";
-import React, { FC, Fragment, useEffect, useState } from "react";
-import { API } from "aws-amplify";
-import { listDocuments } from "../graphql/queries";
-import { ListDocumentsQuery } from "../API";
-import { Document } from "../features/document";
+import React, { FC, Fragment } from "react";
+import { Docu } from "../features/document";
+import { useFetchDocuments } from "../features/document/hooks/useFetchDocuments";
 
 export const PinnedDocuments: FC = () => {
-  const [documents, setDocuments] = useState([]);
-
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const fetchDocuments = async () => {
-    const docs = (await API.graphql({
-      query: listDocuments,
-    })) as { data: ListDocumentsQuery };
-
-    setDocuments(docs.data.listDocuments.items);
-  };
+  const [documents] = useFetchDocuments();
 
   const pinnedDocuments = documents.sort(() => 0.5 - Math.random()).slice(0, 3);
-  console.log(pinnedDocuments);
 
   return (
     <div className="px-4 mt-6 sm:px-6 lg:px-8">
@@ -62,7 +47,7 @@ export const PinnedDocuments: FC = () => {
 };
 
 type PinnedDocumentMenuProps = {
-  document: Document;
+  document: Docu;
 };
 
 const PinnedDocumentMenu: FC<PinnedDocumentMenuProps> = ({ document }) => {

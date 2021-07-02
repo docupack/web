@@ -7,22 +7,16 @@ import {
 import classNames from "classnames";
 import Link from "next/link";
 import { FC } from "react";
-import { Document } from "../../types";
-import { API } from "aws-amplify";
-import { deleteDocument as deleteDocumentMutation } from "../../../../graphql/mutations";
+import { Docu } from "../../types";
 import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
+import { useDeleteDocument } from "../../hooks/useDeleteDocument";
 
 type Props = {
-  document: Document;
+  document: Docu;
 };
 
 export const DocumentRowMenu: FC<Props> = ({ document }) => {
-  const deleteDocument = (id: string) => {
-    API.graphql({
-      query: deleteDocumentMutation,
-      variables: { input: { id } },
-    });
-  };
+  const [deleteDocument, deleteDocumentState] = useDeleteDocument();
 
   return (
     <Menu as="div" className="relative flex justify-end items-center">
@@ -59,12 +53,13 @@ export const DocumentRowMenu: FC<Props> = ({ document }) => {
                   )}
                 </Menu.Item>
               </div>
+              <div>{deleteDocumentState.loading}</div>
               <div className="py-1">
                 <Menu.Item>
                   {({ active }) => (
                     <button
                       type="button"
-                      onClick={() => deleteDocument(document.id)}
+                      onClick={() => deleteDocument(document)}
                       className={classNames(
                         active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"

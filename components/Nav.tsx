@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Auth } from "aws-amplify";
 
 type Props = {
   items: NavItem[];
@@ -13,7 +14,16 @@ type NavItem = {
   current: boolean;
 };
 
-const UserNav: FC<Props> = ({ items }) => {
+const logout = () => {
+  try {
+    Auth.signOut();
+    location.reload();
+  } catch (error) {
+    console.log("error signing out: ", error);
+  }
+};
+
+const Nav: FC<Props> = ({ items }) => {
   const router = useRouter();
 
   return (
@@ -34,9 +44,15 @@ const UserNav: FC<Props> = ({ items }) => {
             </a>
           </Link>
         ))}
+        <a
+          onClick={logout}
+          className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+        >
+          Log out
+        </a>
       </div>
     </nav>
   );
 };
 
-export default UserNav;
+export default Nav;

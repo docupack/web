@@ -7,3 +7,7 @@ export const returnFileSize = (number: number): string => {
     return (number / 1048576).toFixed(1) + "MB";
   }
 };
+
+export const random = (min: number, max: number): number => {
+  return Math.floor(Math.random() * (max - min) + min);
+};

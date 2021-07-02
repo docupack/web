@@ -3,8 +3,18 @@ import { listTemplates } from "../../../graphql/queries";
 import { ListTemplatesQuery } from "../../../API";
 import { useEffect, useState } from "react";
 import { Template } from "../types";
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
-export const useFetchTemplates = (): [
+export const fetchTemplates = async (api: typeof API): Promise<Template[]> => {
+  const templateData = (await api.graphql({
+    query: listTemplates,
+    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+  })) as { data: ListTemplatesQuery };
+
+  return templateData.data.listTemplates.items;
+};
+
+export const useTemplates = (): [
   Template[],
   { error: Error | null; loading: boolean }
 ] => {
@@ -12,23 +22,19 @@ export const useFetchTemplates = (): [
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchTemplates = async () => {
-    const templateData = (await API.graphql({
-      query: listTemplates,
-    })) as { data: ListTemplatesQuery };
-
+  const getTemplates = async () => {
+    setLoading(true);
     try {
-      setTemplates(templateData.data.listTemplates.items);
+      const templateData = await fetchTemplates(API);
+      setTemplates(templateData);
       setLoading(false);
     } catch (e) {
-      console.log(e);
       setLoading(false);
-      setError(e.message);
+      setError(e);
     }
   };
-
   useEffect(() => {
-    fetchTemplates();
+    getTemplates();
   }, []);
 
   return [templates, { error, loading }];

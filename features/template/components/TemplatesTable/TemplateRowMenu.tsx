@@ -7,22 +7,16 @@ import {
 import classNames from "classnames";
 import Link from "next/link";
 import { FC } from "react";
-import { API } from "aws-amplify";
 import { Template } from "../../types";
-import { deleteTemplate as deleteTemplateMutation } from "../../../../graphql/mutations";
 import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
+import { useDeleteTemplate } from "../../hooks/useDeleteTemplate";
 
 type Props = {
   template: Template;
 };
 
 export const TemplateRowMenu: FC<Props> = ({ template }) => {
-  const deleteTemplate = (id: string) => {
-    API.graphql({
-      query: deleteTemplateMutation,
-      variables: { input: { id } },
-    });
-  };
+  const [deleteTemplate] = useDeleteTemplate();
 
   return (
     <Menu as="div" className="relative flex justify-end items-center">
@@ -64,7 +58,7 @@ export const TemplateRowMenu: FC<Props> = ({ template }) => {
                   {({ active }) => (
                     <button
                       type="button"
-                      onClick={() => deleteTemplate(template.id)}
+                      onClick={() => deleteTemplate(template)}
                       className={classNames(
                         active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"

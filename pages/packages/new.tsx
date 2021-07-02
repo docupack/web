@@ -1,34 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MainColumn from "../../components/MainColumn";
 import { API } from "aws-amplify";
-import { listTemplates } from "../../graphql/queries";
-import {
-  CreatePackInput,
-  CreatePackMutation,
-  ListTemplatesQuery,
-} from "../../API";
+import { CreatePackInput, CreatePackMutation } from "../../API";
 import { createPack } from "../../graphql/mutations";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
+import { useTemplates } from "../../features/template/hooks/useTemplates";
+import { changeURLto } from "../../utils/changeURLto";
 
 const NewPackagePage = () => {
-  const [templates, setTemplates] = useState([]);
-  const [template, setTemplate] = useState(null);
+  const [templates] = useTemplates();
+  const [template, setTemplate] = useState("");
   const [pack, setPack] = useState({ name: "" });
   const router = useRouter();
-
-  const fetchTemplates = async () => {
-    const templates = (await API.graphql({
-      query: listTemplates,
-    })) as { data: ListTemplatesQuery };
-
-    setTemplates(templates.data.listTemplates.items);
-    setTemplate(templates.data.listTemplates.items[0].name);
-  };
-
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
 
   const createNewPack = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -46,7 +30,7 @@ const NewPackagePage = () => {
         } as CreatePackInput,
       },
     })) as { data: CreatePackMutation };
-    router.push(`/packages/${result.data.createPack.id}`);
+    await changeURLto(router, `/packages/${result.data.createPack.id}`);
   };
 
   const onOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -63,7 +47,7 @@ const NewPackagePage = () => {
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Document Name*/}
+              {/*Docu Name*/}
               <div>
                 <label
                   htmlFor="name"
@@ -85,17 +69,17 @@ const NewPackagePage = () => {
               </div>
               <div>
                 <label
-                  htmlFor="blueprintName"
+                  htmlFor="templateName"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Blueprint name
+                  Template name
                 </label>
                 <select
                   onChange={onOptionChange}
-                  id="blueprintName"
-                  name="blueprintName"
+                  id="templateName"
+                  name="templateName"
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                  defaultValue={template}
+                  defaultValue={templates[0]?.name}
                 >
                   {templates.map((template) => {
                     return <option key={template.id}>{template.name}</option>;
