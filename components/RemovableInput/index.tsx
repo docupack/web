@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FC } from "react";
 import { MinusCircleIcon } from "@heroicons/react/solid";
+import { Input } from "../Input";
 
 type Props = {
   label: string;
@@ -10,7 +11,7 @@ type Props = {
   id?: string;
 };
 
-export const Input: FC<Props> = ({
+export const RemovableInput: FC<Props> = ({
   label,
   id,
   value,
@@ -35,10 +36,9 @@ export const Input: FC<Props> = ({
         {label}
       </label>
       <div className="mt-1 rounded-md shadow-sm flex">
-        <input
+        <Input
           onChange={handleChange}
           type="text"
-          className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded sm:text-sm border-gray-300"
           placeholder={placeholder}
           value={value}
         />

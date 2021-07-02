@@ -1,7 +1,6 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { FC, useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/solid";
-import { Input } from "./Input";
+import { RemovableInput } from "../RemovableInput";
 
 type InputConfig = {
   id: string;
@@ -13,15 +12,15 @@ type Props = {
   inputs?: string[] | null;
 };
 
-const emptyInput = (): InputConfig => ({
-  id: uuidv4(),
+const emptyInput = (index: number): InputConfig => ({
+  id: index.toString(),
   value: "",
 });
 
 const generateInputConfig = (values: string[]): InputConfig[] => {
-  return values.map((value) => {
+  return values.map((value, index) => {
     return {
-      id: uuidv4(),
+      id: index.toString(),
       value,
     };
   });
@@ -33,15 +32,15 @@ export const InputList: FC<Props> = ({ onChange, inputs }) => {
   useEffect(() => {
     let initialInputs: InputConfig[];
     if (!inputs || !inputs.length) {
-      initialInputs = [emptyInput()];
+      initialInputs = [emptyInput(0)];
     } else {
       initialInputs = generateInputConfig(inputs);
     }
     setList(initialInputs);
-  }, [inputs, list.length]);
+  }, [inputs]);
 
   const addMoreInputField = () => {
-    const inputFields = list.concat(emptyInput());
+    const inputFields = [emptyInput(list.length)].concat(list);
     onChange(
       inputFields.map((i) => {
         return i.value;
@@ -92,7 +91,7 @@ export const InputList: FC<Props> = ({ onChange, inputs }) => {
       {list.map((i) => {
         return (
           <div className="mt-3 rounded-md shadow-sm flex" key={i.id}>
-            <Input
+            <RemovableInput
               label=""
               value={i.value || ""}
               onChange={handleListChange}

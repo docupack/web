@@ -5,7 +5,7 @@ type Props = {
   pageTitle: string;
 };
 
-const MainColumn: FC<Props> = ({ children, pageTitle }) => {
+export const MainColumn: FC<Props> = ({ children, pageTitle }) => {
   return (
     <div className="h-screen flex overflow-hidden bg-white">
       <div className="flex flex-col flex-1 w-0 overflow-hidden">
@@ -23,5 +23,3 @@ const MainColumn: FC<Props> = ({ children, pageTitle }) => {
     </div>
   );
 };
-
-export default MainColumn;
