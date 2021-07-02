@@ -2,13 +2,13 @@ import React, { Dispatch, useEffect, useState } from "react";
 import { API } from "aws-amplify";
 import { getDocument as getDocumentQuery } from "../../../graphql/queries";
 import { GetDocumentQuery } from "../../../API";
-import { Docu } from "../types";
+import { Document } from "../types";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
 export const fetchDocument = async (
   api: typeof API,
   id: string | string[]
-): Promise<Docu> => {
+): Promise<Document> => {
   const docData = (await api.graphql({
     query: getDocumentQuery,
     variables: { id },
@@ -21,8 +21,8 @@ export const fetchDocument = async (
 export const useFetchDocument = (
   id: string | string[]
 ): [
-  Docu,
-  Dispatch<React.SetStateAction<Docu>>,
+  Document,
+  Dispatch<React.SetStateAction<Document>>,
   { error: Error | null; loading: boolean }
 ] => {
   const [document, setDocument] = useState(null);

@@ -1,3 +1,3 @@
 import { GetDocumentQuery } from "../../API";
 
-export type Docu = NonNullable<GetDocumentQuery["getDocument"]>;
+export type Document = NonNullable<GetDocumentQuery["getDocument"]>;

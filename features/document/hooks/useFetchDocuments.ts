@@ -2,10 +2,10 @@ import { API } from "aws-amplify";
 import { listDocuments } from "../../../graphql/queries";
 import { ListDocumentsQuery } from "../../../API";
 import { useEffect, useState } from "react";
-import { Docu } from "../types";
+import { Document } from "../types";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
-export const fetchDocuments = async (api: typeof API): Promise<Docu[]> => {
+export const fetchDocuments = async (api: typeof API): Promise<Document[]> => {
   const documentsData = (await api.graphql({
     query: listDocuments,
     authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
@@ -15,7 +15,7 @@ export const fetchDocuments = async (api: typeof API): Promise<Docu[]> => {
 };
 
 export const useFetchDocuments = (): [
-  Docu[],
+  Document[],
   { error: Error | null; loading: boolean }
 ] => {
   const [documents, setDocuments] = useState([]);
