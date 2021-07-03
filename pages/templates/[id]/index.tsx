@@ -1,17 +1,20 @@
 import { withSSRContext } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/router";
-import MainColumn from "../../../components/MainColumn";
-import { Badge } from "../../../components/Badge";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { fetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
 import { changeURLto } from "../../../utils/changeURLto";
+import { Badge, MainColumn } from "../../../components";
+import { Color } from "../../../utils/color";
 
 const TemplatePage = ({
   template,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { id } = router.query;
+  const documentTypes = (template?.documentTypes ?? []).filter(
+    (docType: string) => docType !== ""
+  );
 
   return (
     <MainColumn pageTitle="View Your Template">
@@ -19,7 +22,7 @@ const TemplatePage = ({
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Docu Name*/}
+              {/*Document Name*/}
               <div>
                 <label
                   htmlFor="templateName"
@@ -55,7 +58,7 @@ const TemplatePage = ({
                   </p>
                 </div>
               </div>
-              {/*Docu Type*/}
+              {/*Document Type*/}
               <div>
                 <label
                   htmlFor="documentType"
@@ -64,13 +67,13 @@ const TemplatePage = ({
                   Document Type
                 </label>
                 <div className="mt-1 rounded-md shadow-sm flex">
-                  {template?.documentTypes.map((docType: string) => {
+                  {documentTypes.map((docType: string, index: number) => {
                     return (
                       <Badge
                         size="sm"
-                        bgColor="purple"
-                        textColor="gray"
-                        key={docType}
+                        bgColor={Color.Purple}
+                        textColor={Color.Gray}
+                        key={index}
                       >
                         {docType}
                       </Badge>

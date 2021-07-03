@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, useCallback, useState } from "react";
-import MainColumn from "../../components/MainColumn";
+import { Button, MainColumn } from "../../components";
 import DocumentUpload from "../../features/document/components/DocumentUpload";
 import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
@@ -14,9 +14,9 @@ const NewDocumentPage = () => {
   const [file, setFile] = useState(null);
   const [createDocument, createDocumentState] = useCreateDocument();
   const [uploadDocument, uploadState] = useUploadDocument();
+  const router = useRouter();
 
   const { name, type, description } = doc;
-  const router = useRouter();
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setDoc(() => ({ ...doc, [e.target.name]: e.target.value }));
@@ -39,7 +39,10 @@ const NewDocumentPage = () => {
 
   return (
     <MainColumn pageTitle="Add New Document">
-      <form className="divide-y divide-gray-200 lg:col-span-9">
+      <form
+        className="divide-y divide-gray-200 lg:col-span-9"
+        onSubmit={createNewDocument}
+      >
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
@@ -121,19 +124,10 @@ const NewDocumentPage = () => {
               {/*Action buttons*/}
               <div className="pt-5">
                 <div className="flex justify-start">
-                  <button
-                    type="button"
-                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={createNewDocument}
-                    type="submit"
-                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
+                  <Button type="button">Cancel</Button>
+                  <Button type="submit" className="ml-4">
                     Save
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

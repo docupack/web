@@ -1,8 +1,7 @@
-import React, { ChangeEvent, useState } from "react";
-import MainColumn from "../../components/MainColumn";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { useCreateTemplate } from "../../features/template/hooks/useCreateTemplate";
-import { InputList } from "../../components/InputList";
+import { InputList, MainColumn } from "../../components";
 import { changeURLto } from "../../utils/changeURLto";
 
 const initialValue = {
@@ -23,7 +22,7 @@ const NewTemplatePage = () => {
     setTemplate(() => ({ ...template, [e.target.name]: e.target.value }));
   };
 
-  const createNewTemplate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const createNewTemplate = async (e: FormEvent) => {
     e.preventDefault();
     if (!name) return;
     const result = await createTemplate({
@@ -35,7 +34,10 @@ const NewTemplatePage = () => {
 
   return (
     <MainColumn pageTitle="Create a template">
-      <form className="divide-y divide-gray-200 lg:col-span-9">
+      <form
+        className="divide-y divide-gray-200 lg:col-span-9"
+        onSubmit={createNewTemplate}
+      >
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
@@ -97,7 +99,6 @@ const NewTemplatePage = () => {
                     Cancel
                   </button>
                   <button
-                    onClick={createNewTemplate}
                     type="submit"
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
