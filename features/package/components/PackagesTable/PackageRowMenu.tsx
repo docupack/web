@@ -1,23 +1,16 @@
 import { Menu } from "@headlessui/react";
-import {
-  DotsVerticalIcon,
-  PencilAltIcon,
-  TrashIcon,
-} from "@heroicons/react/outline";
+import { DotsVerticalIcon, TrashIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
-import Link from "next/link";
 import { FC } from "react";
 import { Pack } from "../../types";
-import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
-import { useDeletePackage } from "../../hooks/useDeletePackage";
+import { OpenMenuTransition } from "../../../../components";
 
 type Props = {
   pack: Pack;
+  onDelete: () => void;
 };
 
-export const PackageRowMenu: FC<Props> = ({ pack }) => {
-  const [deletePack] = useDeletePackage();
-
+export const PackageRowMenu: FC<Props> = ({ pack, onDelete }) => {
   return (
     <Menu as="div" className="relative flex justify-end items-center">
       {({ open }) => (
@@ -34,31 +27,9 @@ export const PackageRowMenu: FC<Props> = ({ pack }) => {
               <div className="py-1">
                 <Menu.Item>
                   {({ active }) => (
-                    <Link href={`/packages/${pack.id}/edit`}>
-                      <a
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-700",
-                          "group flex items-center px-4 py-2 text-sm"
-                        )}
-                      >
-                        <PencilAltIcon
-                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                        Edit
-                      </a>
-                    </Link>
-                  )}
-                </Menu.Item>
-              </div>
-              <div className="py-1">
-                <Menu.Item>
-                  {({ active }) => (
                     <button
                       type="button"
-                      onSubmit={() => deletePack(pack)}
+                      onClick={onDelete}
                       className={classNames(
                         active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"

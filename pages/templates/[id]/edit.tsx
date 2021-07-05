@@ -1,11 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import MainColumn from "../../../components/MainColumn";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { API, withSSRContext } from "aws-amplify";
 import { UpdateTemplateMutation } from "../../../API";
 import { updateTemplate } from "../../../graphql/mutations";
 import { fetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
-import { InputList } from "../../../components/InputList";
+import { InputList, MainColumn } from "../../../components";
 import { changeURLto } from "../../../utils/changeURLto";
 import { GetServerSideProps } from "next";
 import { Template } from "../../../features/template";
@@ -33,9 +32,7 @@ const EditTemplatePage = ({ template }: Props) => {
   };
 
   const { name, description } = updatedTemplate || {};
-  const editCurrentTemplate = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const editCurrentTemplate = async (e: FormEvent) => {
     e.preventDefault();
     if (!name) return;
 
@@ -56,7 +53,10 @@ const EditTemplatePage = ({ template }: Props) => {
 
   return (
     <MainColumn pageTitle="Edit Your Template">
-      <form className="divide-y divide-gray-200 lg:col-span-9" method="POST">
+      <form
+        className="divide-y divide-gray-200 lg:col-span-9"
+        onSubmit={editCurrentTemplate}
+      >
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
@@ -112,7 +112,6 @@ const EditTemplatePage = ({ template }: Props) => {
                     Cancel
                   </button>
                   <button
-                    onClick={editCurrentTemplate}
                     type="submit"
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >

@@ -7,17 +7,15 @@ import {
 import classNames from "classnames";
 import Link from "next/link";
 import { FC } from "react";
-import { Docu } from "../../types";
-import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
-import { useDeleteDocument } from "../../hooks/useDeleteDocument";
+import { Document } from "../../types";
+import { OpenMenuTransition } from "../../../../components";
 
 type Props = {
-  document: Docu;
+  document: Document;
+  onDelete: () => void;
 };
 
-export const DocumentRowMenu: FC<Props> = ({ document }) => {
-  const [deleteDocument, deleteDocumentState] = useDeleteDocument();
-
+export const DocumentRowMenu: FC<Props> = ({ document, onDelete }) => {
   return (
     <Menu as="div" className="relative flex justify-end items-center">
       {({ open }) => (
@@ -53,13 +51,12 @@ export const DocumentRowMenu: FC<Props> = ({ document }) => {
                   )}
                 </Menu.Item>
               </div>
-              <div>{deleteDocumentState.loading}</div>
               <div className="py-1">
                 <Menu.Item>
                   {({ active }) => (
                     <button
                       type="button"
-                      onClick={() => deleteDocument(document)}
+                      onClick={onDelete}
                       className={classNames(
                         active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"

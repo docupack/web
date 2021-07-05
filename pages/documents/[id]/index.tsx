@@ -1,24 +1,29 @@
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import React, { FC } from "react";
-import MainColumn from "../../../components/MainColumn";
-import { Badge } from "../../../components/Badge";
+import { Badge, MainColumn } from "../../../components";
 import { fetchDocument } from "../../../features/document/hooks/useFetchDocument";
 import { withSSRContext } from "aws-amplify";
 import { GetServerSideProps } from "next";
-import { Docu } from "../../../features/document";
+import { Document } from "../../../features/document";
+import { Color } from "../../../utils/color";
+import { changeURLto } from "../../../utils/changeURLto";
+import { useRouter } from "next/router";
 
 type Props = {
-  doc: Docu;
+  doc: Document;
 };
 
 const SingularDocument: FC<Props> = ({ doc }) => {
+  const router = useRouter();
+  const { id } = router.query;
+
   return (
     <MainColumn pageTitle="View Your Document">
       <div className="divide-y divide-gray-200 lg:col-span-9">
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Docu Name*/}
+              {/*Document Name*/}
               <div>
                 <label
                   htmlFor="documentName"
@@ -54,7 +59,7 @@ const SingularDocument: FC<Props> = ({ doc }) => {
                   </p>
                 </div>
               </div>
-              {/*Docu Type*/}
+              {/*Document Type*/}
               <div>
                 <label
                   htmlFor="documentType"
@@ -63,9 +68,22 @@ const SingularDocument: FC<Props> = ({ doc }) => {
                   Document Type
                 </label>
                 <div className="mt-1 rounded-md shadow-sm flex">
-                  <Badge size="sm" bgColor="red" textColor="gray">
+                  <Badge size="sm" bgColor={Color.Red} textColor={Color.Gray}>
                     {doc?.type}
                   </Badge>
+                </div>
+              </div>
+              <div className="pt-5">
+                <div className="flex justify-start">
+                  <button
+                    onClick={() => {
+                      changeURLto(router, `/documents/${id}/edit`);
+                    }}
+                    type="submit"
+                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
             </div>

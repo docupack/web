@@ -1,18 +1,31 @@
 import cx from "classnames";
 import Link from "next/link";
-import React, { FC } from "react";
-import { Badge } from "../../../../components/Badge";
+import React, { FC, useState } from "react";
+import { Badge } from "../../../../components";
 import { Template } from "../../types";
 import { TemplateRowMenu } from "./TemplateRowMenu";
+import { parseISOTime } from "../../../../utils/parseISOTime";
+import { Color } from "../../../../utils/color";
+import useInterval from "../../../useInterval";
 
 type Props = {
   template: Template;
+  onDelete: () => void;
 };
 
-export const TemplatesTableRow: FC<Props> = ({ template }) => {
+export const TemplatesTableRow: FC<Props> = ({ template, onDelete }) => {
+  const [updatedAt, setUpdatedAt] = useState(parseISOTime(template.updatedAt));
+
+  useInterval(() => {
+    setUpdatedAt(parseISOTime(template.updatedAt));
+  }, 1000);
+  const documentTypes = template?.documentTypes.filter(
+    (docType) => docType !== ""
+  );
+
   return (
     <tr>
-      <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
+      <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900 w-5/12">
         <div className="flex items-center space-x-3 lg:pl-2">
           <div
             className={cx(
@@ -30,18 +43,23 @@ export const TemplatesTableRow: FC<Props> = ({ template }) => {
           </Link>
         </div>
       </td>
-      <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
-        {template?.documentTypes.map((docType) => (
-          <Badge size="sm" bgColor="purple" textColor="gray" key={docType}>
+      <td className="px-6 py-3 text-sm text-gray-500 whitespace-nowrap font-medium max-w-md w-5/12">
+        {documentTypes.map((docType, index) => (
+          <Badge
+            size="sm"
+            bgColor={Color.Purple}
+            textColor={Color.Gray}
+            key={index}
+          >
             {docType}
           </Badge>
         ))}
       </td>
-      <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
-        {template.updatedAt}
+      <td className="px-6 py-3 text-sm text-gray-500 whitespace-nowrap font-medium w-2/12 text-right">
+        {updatedAt}
       </td>
       <td className="pr-6">
-        <TemplateRowMenu template={template} />
+        <TemplateRowMenu template={template} onDelete={onDelete} />
       </td>
     </tr>
   );

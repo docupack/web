@@ -1,21 +1,20 @@
 import { Auth } from "aws-amplify";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { useFetchUser } from "../../features/useFetchUser";
 import { useRouter } from "next/router";
-import { changeURLto } from "../../utils/changeURLto";
+import { useUserContext } from "../../features/auth/utils/user-context";
 
-const LoginPage = () => {
+const LoginPage = (): JSX.Element => {
   const [formState, updateFormState] = useState({ username: "", password: "" });
   const [error, setError] = useState<Error | null>(null);
   const router = useRouter();
-  const [user] = useFetchUser();
+  const user = useUserContext();
 
   useEffect(() => {
     if (user) {
-      changeURLto(router, "/");
+      router.replace("/");
     }
-  }, [router, user]);
+  }, [router]);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.persist();
@@ -30,7 +29,7 @@ const LoginPage = () => {
     setError(null);
     try {
       await signIn();
-      await changeURLto(router, "/");
+      await router.push("/");
       location.reload();
     } catch (e) {
       setError(e);
@@ -55,7 +54,7 @@ const LoginPage = () => {
             </h2>
             <p className="mt-2 text-sm text-gray-600 max-w">
               Do not you have an account?{" "}
-              <Link href="#">
+              <Link href="/auth/signup">
                 <a className="font-medium text-indigo-600 hover:text-indigo-500">
                   Sign up
                 </a>
@@ -84,7 +83,7 @@ const LoginPage = () => {
                       name="username"
                       type="text"
                       autoComplete="text"
-                      placeholder="Iron man"
+                      placeholder="iron-man"
                       required
                       onChange={onChange}
                     />

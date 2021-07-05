@@ -8,16 +8,14 @@ import classNames from "classnames";
 import Link from "next/link";
 import { FC } from "react";
 import { Template } from "../../types";
-import { OpenMenuTransition } from "../../../../components/OpenMenuTransition";
-import { useDeleteTemplate } from "../../hooks/useDeleteTemplate";
+import { OpenMenuTransition } from "../../../../components";
 
 type Props = {
   template: Template;
+  onDelete: () => void;
 };
 
-export const TemplateRowMenu: FC<Props> = ({ template }) => {
-  const [deleteTemplate] = useDeleteTemplate();
-
+export const TemplateRowMenu: FC<Props> = ({ template, onDelete }) => {
   return (
     <Menu as="div" className="relative flex justify-end items-center">
       {({ open }) => (
@@ -58,7 +56,7 @@ export const TemplateRowMenu: FC<Props> = ({ template }) => {
                   {({ active }) => (
                     <button
                       type="button"
-                      onClick={() => deleteTemplate(template)}
+                      onClick={onDelete}
                       className={classNames(
                         active ? "text-gray-900" : "text-gray-700",
                         "group flex items-center px-4 py-2 text-sm"

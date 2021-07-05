@@ -1,36 +1,35 @@
-import React, { ChangeEvent } from "react";
-import MainColumn from "../../../components/MainColumn";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { MainColumn } from "../../../components";
 import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { API } from "aws-amplify";
+import { API, withSSRContext } from "aws-amplify";
 import { UpdateDocumentMutation } from "../../../API";
 import { updateDocument } from "../../../graphql/mutations";
-import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
+import { fetchDocument } from "../../../features/document/hooks/useFetchDocument";
 import { changeURLto } from "../../../utils/changeURLto";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-const EditDocumentPage = () => {
+const EditDocumentPage = ({
+  doc,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { id } = router.query;
-  const [doc, setDoc] = useFetchDocument(id);
+  const [updatedDoc, setUpdatedDoc] = useState(doc);
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setDoc(() => ({
-      ...doc,
+    setUpdatedDoc(() => ({
+      ...updatedDoc,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const { name, description, type } = doc || {};
-
-  const updateCurrentDocument = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const updateCurrentDocument = async (e: FormEvent) => {
     e.preventDefault();
+    const { id, name, description, type } = updatedDoc;
     if (!name || !type) return;
-    const updatedDocument = { id, name, type, description };
+
     const result = (await API.graphql({
       query: updateDocument,
-      variables: { input: updatedDocument },
+      variables: { input: { id, name, description, type } },
     })) as { data: UpdateDocumentMutation };
 
     await changeURLto(router, `/documents/${result.data.updateDocument.id}`);
@@ -38,7 +37,10 @@ const EditDocumentPage = () => {
 
   return (
     <MainColumn pageTitle="Edit Your Document">
-      <form className="divide-y divide-gray-200 lg:col-span-9">
+      <form
+        className="divide-y divide-gray-200 lg:col-span-9"
+        onSubmit={updateCurrentDocument}
+      >
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
@@ -58,7 +60,7 @@ const EditDocumentPage = () => {
                     id="documentName"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
-                    value={doc?.name}
+                    value={updatedDoc?.name}
                   />
                 </div>
               </div>
@@ -79,7 +81,7 @@ const EditDocumentPage = () => {
                     rows={3}
                     className="shadow-sm focus:ring-light-blue-500 focus:border-light-blue-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
                     placeholder="This document is from 5 years ago - Feb 14 2016..."
-                    value={doc?.description}
+                    value={updatedDoc?.description}
                   />
                 </div>
                 <p className="mt-2 text-sm text-gray-500">
@@ -102,7 +104,7 @@ const EditDocumentPage = () => {
                     id="documentType"
                     className="focus:ring-light-blue-500 focus:border-light-blue-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Passport, visa..."
-                    value={doc?.type}
+                    value={updatedDoc?.type}
                   />
                 </div>
               </div>
@@ -118,7 +120,6 @@ const EditDocumentPage = () => {
                   </button>
                   <button
                     type="submit"
-                    onClick={updateCurrentDocument}
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Save
@@ -131,6 +132,18 @@ const EditDocumentPage = () => {
       </form>
     </MainColumn>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { API } = withSSRContext(context);
+  const { id } = context.params;
+  const document = await fetchDocument(API, id);
+
+  return {
+    props: {
+      doc: document,
+    },
+  };
 };
 
 export default withAuthenticator(EditDocumentPage);

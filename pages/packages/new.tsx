@@ -1,53 +1,59 @@
-import React, { useState } from "react";
-import MainColumn from "../../components/MainColumn";
-import { API } from "aws-amplify";
-import { CreatePackInput, CreatePackMutation } from "../../API";
+import React, { FormEvent, useEffect, useState } from "react";
+import { MainColumn } from "../../components";
+import { API, withSSRContext } from "aws-amplify";
+import { CreatePackInput, CreatePackMutation, Template } from "../../API";
 import { createPack } from "../../graphql/mutations";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
-import { useTemplates } from "../../features/template/hooks/useTemplates";
+import { fetchTemplates } from "../../features/template/hooks/useFetchTemplates";
 import { changeURLto } from "../../utils/changeURLto";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useCreatePackage } from "../../features/package/hooks/useCreatePackage";
 
-const NewPackagePage = () => {
-  const [templates] = useTemplates();
-  const [template, setTemplate] = useState("");
-  const [pack, setPack] = useState({ name: "" });
+const NewPackagePage = ({
+  templates,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [template, setTemplate] = useState(null);
+  const [pack, setPack] = useState({ name: "", description: "" });
+  const [createPack] = useCreatePackage();
   const router = useRouter();
 
-  const createNewPack = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  // if user don't have any template ready, show "Create template first" message
+  // a pack can't be created without a template
+  useEffect(() => {
+    setTemplate(templates[0]);
+  }, [templates]);
+
+  const createNewPack = async (e: FormEvent) => {
     e.preventDefault();
-    const item = templates.filter((blueprint) => {
-      return blueprint.name === template;
+    const item = templates.find((blueprint: Template) => {
+      return blueprint.name === template.name;
     });
 
-    const result = (await API.graphql({
-      query: createPack,
-      variables: {
-        input: {
-          id: uuidv4(),
-          templateID: item[0].id,
-          name: pack.name,
-        } as CreatePackInput,
-      },
-    })) as { data: CreatePackMutation };
-    await changeURLto(router, `/packages/${result.data.createPack.id}`);
+    const result = await createPack({ ...pack, templateID: item.id });
+    await changeURLto(router, `/packages/${result.id}`);
   };
 
   const onOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTemplate(e.target.value);
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setPack(() => ({ ...pack, [e.target.name]: e.target.value }));
   };
 
   return (
-    <MainColumn pageTitle="Create a package from blueprint">
-      <form className="divide-y divide-gray-200 lg:col-span-9">
+    <MainColumn pageTitle="Create a package from a template">
+      <form
+        className="divide-y divide-gray-200 lg:col-span-9"
+        onSubmit={createNewPack}
+      >
         <div className="py-6 px-4 sm:p-6 lg:pb-8">
           <div className="flex flex-col lg:flex-row">
             <div className="flex-grow space-y-6">
-              {/*Docu Name*/}
+              {/*Document Name*/}
               <div>
                 <label
                   htmlFor="name"
@@ -69,6 +75,28 @@ const NewPackagePage = () => {
               </div>
               <div>
                 <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Description
+                </label>
+                <div className="mt-1">
+                  <textarea
+                    onChange={onChange}
+                    id="description"
+                    name="description"
+                    rows={3}
+                    className="shadow-sm focus:ring-light-blue-500 focus:border-light-blue-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
+                    placeholder="This package is for educational usage only."
+                    value={pack.description}
+                  />
+                </div>
+                <p className="mt-2 text-sm text-gray-500">
+                  Brief description about your package.
+                </p>
+              </div>
+              <div>
+                <label
                   htmlFor="templateName"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -81,7 +109,7 @@ const NewPackagePage = () => {
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                   defaultValue={templates[0]?.name}
                 >
-                  {templates.map((template) => {
+                  {templates.map((template: Template) => {
                     return <option key={template.id}>{template.name}</option>;
                   })}
                 </select>
@@ -97,7 +125,6 @@ const NewPackagePage = () => {
                     Cancel
                   </button>
                   <button
-                    onClick={createNewPack}
                     type="submit"
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
@@ -111,6 +138,17 @@ const NewPackagePage = () => {
       </form>
     </MainColumn>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { API } = withSSRContext(context);
+  const templates = await fetchTemplates(API);
+
+  return {
+    props: {
+      templates,
+    },
+  };
 };
 
 export default NewPackagePage;

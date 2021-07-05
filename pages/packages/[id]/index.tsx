@@ -1,16 +1,13 @@
+import { Badge, MainColumn } from "../../../components";
+import { fetchPack } from "../../../features/package/hooks/useFetchPackage";
+import { Color } from "../../../utils/color";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { useRouter } from "next/router";
-import MainColumn from "../../../components/MainColumn";
-import { Badge } from "../../../components/Badge";
-import { useFetchPackage } from "../../../features/package/hooks/useFetchPackage";
-import { changeURLto } from "../../../utils/changeURLto";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { withSSRContext } from "aws-amplify";
 
-const Pack = () => {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const [pack] = useFetchPackage(id);
-
+const Pack = ({
+  pack,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <MainColumn pageTitle="View Your Package">
       <div className="divide-y divide-gray-200 lg:col-span-9">
@@ -66,28 +63,14 @@ const Pack = () => {
                     return (
                       <Badge
                         size="sm"
-                        bgColor="purple"
-                        textColor="gray"
+                        bgColor={Color.Purple}
+                        textColor={Color.Gray}
                         key={docType}
                       >
                         {docType}
                       </Badge>
                     );
                   })}
-                </div>
-
-                <div className="pt-5">
-                  <div className="flex justify-start">
-                    <button
-                      onClick={() => {
-                        changeURLto(router, `/packages/${id}/edit`);
-                      }}
-                      type="submit"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Edit
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -96,6 +79,18 @@ const Pack = () => {
       </div>
     </MainColumn>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { API } = withSSRContext(context);
+  const { id } = context.params;
+  const pack = await fetchPack(API, id);
+
+  return {
+    props: {
+      pack,
+    },
+  };
 };
 
 export default withAuthenticator(Pack);
