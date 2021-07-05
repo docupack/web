@@ -5,6 +5,7 @@ import { fetchDocuments } from "../../features/document/hooks/useFetchDocuments"
 import { DocumentsTable } from "../../features/document";
 import Image from "next/image";
 import React from "react";
+import { AddDocument } from "../../components/AddDocument";
 
 const Documents = ({
   documents,
@@ -15,7 +16,7 @@ const Documents = ({
         <EmptyState
           message="You don't have any document yet."
           link="/documents/new"
-          icon={<Image src="/add_document.svg" height="350" width="400" />}
+          icon={<AddDocument />}
         />
       ) : (
         <DocumentsTable documents={documents} />
