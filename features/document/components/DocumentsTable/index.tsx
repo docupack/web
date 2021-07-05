@@ -7,6 +7,7 @@ import { useDeleteDocument } from "../../hooks/useDeleteDocument";
 import { Button, DeleteModal, EmptyState } from "../../../../components";
 import Image from "next/image";
 import Link from "next/link";
+import { AddDocument } from "../../../../components/AddDocument";
 
 type Props = {
   documents?: Document[];
@@ -94,7 +95,7 @@ export const DocumentsTable: FC<Props> = ({ documents }) => {
           <EmptyState
             message="You don't have any document yet."
             link="/documents/new"
-            icon={<Image src="/add_document.svg" height="150" width="300" />}
+            icon={<AddDocument />}
           />
         ) : (
           ""

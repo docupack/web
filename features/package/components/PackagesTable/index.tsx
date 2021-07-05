@@ -3,7 +3,12 @@ import { PackagesTableRow } from "./PackagesTableRow";
 import { Pack } from "../../types";
 import { fetchPackages } from "../../hooks/useFetchPackages";
 import { API } from "aws-amplify";
-import { Button, DeleteModal, EmptyState } from "../../../../components";
+import {
+  Button,
+  CargoShip,
+  DeleteModal,
+  EmptyState,
+} from "../../../../components";
 import { useDeletePackage } from "../../hooks/useDeletePackage";
 import Image from "next/image";
 import Link from "next/link";
@@ -96,7 +101,7 @@ export const PackagesTable: FC<Props> = ({ packages }) => {
           <EmptyState
             message="You don't have any package yet."
             link="/packages/new"
-            icon={<Image src="/add_packages.svg" height="250" width="300" />}
+            icon={<CargoShip />}
           />
         ) : (
           ""
