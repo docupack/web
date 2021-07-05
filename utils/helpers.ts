@@ -1,3 +1,5 @@
+import { Color } from "./color";
+
 export const returnFileSize = (number: number): string => {
   if (number < 1024) {
     return number + "bytes";
@@ -10,4 +12,16 @@ export const returnFileSize = (number: number): string => {
 
 export const random = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min) + min);
+};
+
+export const getRandomColor = (): Color => {
+  const colors: Color[] = [
+    Color.Blue,
+    Color.Green,
+    Color.Red,
+    Color.Purple,
+    Color.Yellow,
+    Color.Pink,
+  ];
+  return colors[random(0, colors.length)];
 };
