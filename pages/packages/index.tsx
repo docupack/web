@@ -1,37 +1,26 @@
 import { CargoShip, EmptyState, MainColumn } from "../../components";
 import { PackagesTable } from "../../features/package";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { withSSRContext } from "aws-amplify";
-import { fetchPackages } from "../../features/package/hooks/useFetchPackages";
-import Image from "next/image";
+import { useFetchPacks } from "../../features/package/hooks/useFetchPackages";
 import React from "react";
 
-const Packages = ({
-  packages,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Packages = () => {
+  const [packs, { loading }] = useFetchPacks();
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <MainColumn pageTitle="Packages">
-      {packages.length === 0 ? (
+      {packs.length === 0 ? (
         <EmptyState
           message="You don't have any package yet."
           link="/packages/new"
           icon={<CargoShip />}
         />
       ) : (
-        <PackagesTable packages={packages} />
+        <PackagesTable packages={packs} />
       )}
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const packages = await fetchPackages(API);
-  return {
-    props: {
-      packages,
-    },
-  };
 };
 
 export default Packages;

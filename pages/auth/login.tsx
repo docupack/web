@@ -29,8 +29,7 @@ const LoginPage = (): JSX.Element => {
     setError(null);
     try {
       await signIn();
-      await router.push("/");
-      location.reload();
+      location.href = "/";
     } catch (e) {
       setError(e);
     }

@@ -1,21 +1,17 @@
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import React, { FC } from "react";
 import { Badge, MainColumn } from "../../../components";
-import { fetchDocument } from "../../../features/document/hooks/useFetchDocument";
-import { withSSRContext } from "aws-amplify";
-import { GetServerSideProps } from "next";
-import { Document } from "../../../features/document";
+import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
 import { Color } from "../../../utils/color";
 import { changeURLto } from "../../../utils/changeURLto";
 import { useRouter } from "next/router";
 
-type Props = {
-  doc: Document;
-};
-
-const SingularDocument: FC<Props> = ({ doc }) => {
+const SingularDocument: FC = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [doc, { loading }] = useFetchDocument(id);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <MainColumn pageTitle="View Your Document">
@@ -92,18 +88,6 @@ const SingularDocument: FC<Props> = ({ doc }) => {
       </div>
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const { id } = context.params;
-  const doc = await fetchDocument(API, id);
-
-  return {
-    props: {
-      doc,
-    },
-  };
 };
 
 export default withAuthenticator(SingularDocument);

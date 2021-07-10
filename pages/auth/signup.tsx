@@ -34,9 +34,7 @@ const RegisterPage = () => {
     setError(null);
     try {
       await signUp();
-      console.log("success");
-      location.reload();
-      await changeURLto(router, "/");
+      location.href = "/";
     } catch (e) {
       console.log(e);
       setError(e);

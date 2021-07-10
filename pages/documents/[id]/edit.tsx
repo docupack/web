@@ -1,19 +1,23 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { MainColumn } from "../../../components";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Button, MainColumn } from "../../../components";
 import { useRouter } from "next/router";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { API, withSSRContext } from "aws-amplify";
+import { API } from "aws-amplify";
 import { UpdateDocumentMutation } from "../../../API";
 import { updateDocument } from "../../../graphql/mutations";
-import { fetchDocument } from "../../../features/document/hooks/useFetchDocument";
+import { useFetchDocument } from "../../../features/document/hooks/useFetchDocument";
 import { changeURLto } from "../../../utils/changeURLto";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { Color } from "../../../utils/color";
 
-const EditDocumentPage = ({
-  doc,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const EditDocumentPage = () => {
   const router = useRouter();
+  const { id } = router.query;
+  const [doc, { loading }] = useFetchDocument(id);
   const [updatedDoc, setUpdatedDoc] = useState(doc);
+
+  useEffect(() => {
+    setUpdatedDoc(doc);
+  }, [doc]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setUpdatedDoc(() => ({
@@ -34,6 +38,10 @@ const EditDocumentPage = ({
 
     await changeURLto(router, `/documents/${result.data.updateDocument.id}`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <MainColumn pageTitle="Edit Your Document">
@@ -118,12 +126,9 @@ const EditDocumentPage = ({
                   >
                     Cancel
                   </button>
-                  <button
-                    type="submit"
-                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
+                  <Button className="ml-4" variant={Color.Pink}>
                     Save
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -132,18 +137,6 @@ const EditDocumentPage = ({
       </form>
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const { id } = context.params;
-  const document = await fetchDocument(API, id);
-
-  return {
-    props: {
-      doc: document,
-    },
-  };
 };
 
 export default withAuthenticator(EditDocumentPage);

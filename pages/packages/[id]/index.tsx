@@ -1,13 +1,15 @@
 import { Badge, MainColumn } from "../../../components";
-import { fetchPack } from "../../../features/package/hooks/useFetchPackage";
+import { useFetchPackage } from "../../../features/package/hooks/useFetchPackage";
 import { Color } from "../../../utils/color";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { withSSRContext } from "aws-amplify";
+import { useRouter } from "next/router";
 
-const Pack = ({
-  pack,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Pack = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const [pack] = useFetchPackage(id);
+
   return (
     <MainColumn pageTitle="View Your Package">
       <div className="divide-y divide-gray-200 lg:col-span-9">
@@ -79,18 +81,6 @@ const Pack = ({
       </div>
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const { id } = context.params;
-  const pack = await fetchPack(API, id);
-
-  return {
-    props: {
-      pack,
-    },
-  };
 };
 
 export default withAuthenticator(Pack);

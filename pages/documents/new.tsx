@@ -6,8 +6,14 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import { useCreateDocument } from "../../features/document/hooks/useCreateDocument";
 import { useUploadDocument } from "../../features/document/hooks/useUploadDocument";
 import { changeURLto } from "../../utils/changeURLto";
+import { CreateDocumentInput } from "../../API";
 
-const initialValue = { id: "", name: "", type: "", description: "" };
+const initialValue: CreateDocumentInput = {
+  id: "",
+  name: "",
+  type: "",
+  description: "",
+};
 
 const NewDocumentPage = () => {
   const [doc, setDoc] = useState(initialValue);

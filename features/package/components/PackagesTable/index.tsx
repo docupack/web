@@ -9,16 +9,16 @@ import {
   DeleteModal,
   EmptyState,
 } from "../../../../components";
-import { useDeletePackage } from "../../hooks/useDeletePackage";
-import Image from "next/image";
 import Link from "next/link";
+import { useDeletePack } from "../../hooks/useDeletePackage";
+import { Color } from "../../../../utils/color";
 
 type Props = {
   packages?: Pack[];
 };
 
 export const PackagesTable: FC<Props> = ({ packages }) => {
-  const [deletePack] = useDeletePackage();
+  const [deletePack] = useDeletePack();
   const [packets, setPackets] = useState(packages);
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -31,7 +31,7 @@ export const PackagesTable: FC<Props> = ({ packages }) => {
   };
 
   const deleteAndRefetch = async (id: string) => {
-    await deletePack({ id });
+    await deletePack(id);
     await refetch();
   };
 
@@ -52,7 +52,7 @@ export const PackagesTable: FC<Props> = ({ packages }) => {
       <div className="float-right pr-8 py-4">
         <Link href="/packages/new">
           <a>
-            <Button>Add new package</Button>
+            <Button variant={Color.Purple}>Add new package</Button>
           </a>
         </Link>
       </div>

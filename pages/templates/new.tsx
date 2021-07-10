@@ -13,9 +13,10 @@ const initialValue = {
 const NewTemplatePage = () => {
   const [template, setTemplate] = useState(initialValue);
   const [documentTypes, setDocumentTypes] = useState([]);
-  const [createTemplate, { error }] = useCreateTemplate();
 
+  const [createTemplate] = useCreateTemplate();
   const router = useRouter();
+
   const { name, description } = template;
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -91,7 +92,6 @@ const NewTemplatePage = () => {
               {/*Action buttons*/}
               <div className="pt-5">
                 <div className="flex justify-start">
-                  <span>{error}</span>
                   <button
                     type="button"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

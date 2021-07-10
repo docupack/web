@@ -1,17 +1,15 @@
-import { withSSRContext } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/router";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { fetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
 import { changeURLto } from "../../../utils/changeURLto";
 import { Badge, MainColumn } from "../../../components";
 import { Color } from "../../../utils/color";
+import { useFetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
 
-const TemplatePage = ({
-  template,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const TemplatePage = () => {
   const router = useRouter();
   const { id } = router.query;
+
+  const [template] = useFetchTemplate(id);
   const documentTypes = (template?.documentTypes ?? []).filter(
     (docType: string) => docType !== ""
   );
@@ -101,19 +99,6 @@ const TemplatePage = ({
       </div>
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const { id } = context.params;
-  const template = await fetchTemplate(API, id);
-  if (!template) return { notFound: true };
-
-  return {
-    props: {
-      template,
-    },
-  };
 };
 
 export default withAuthenticator(TemplatePage);
