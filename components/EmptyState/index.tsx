@@ -1,7 +1,7 @@
 import React, { FC } from "react";
-import { Button } from "../Button";
 import { Color } from "../../utils/color";
 import Link from "next/link";
+import { ButtonLink } from "../ButtonLink";
 
 type Props = {
   message: string;
@@ -16,8 +16,8 @@ export const EmptyState: FC<Props> = ({ message, link, icon }) => {
       <div className="self-center text-lg">{message}</div>
       {link && (
         <div className="self-center">
-          <Link href={link || "#"}>
-            <Button color={Color.Purple}>Get started</Button>
+          <Link href={link || "#"} passHref>
+            <ButtonLink color={Color.Purple}>Get started</ButtonLink>
           </Link>
         </div>
       )}

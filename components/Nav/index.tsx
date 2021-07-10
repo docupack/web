@@ -3,8 +3,6 @@ import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Auth } from "aws-amplify";
-import { changeURLto } from "../../utils/changeURLto";
-import { NextRouter } from "next/dist/client/router";
 
 type Props = {
   items: NavItem[];
@@ -16,11 +14,10 @@ type NavItem = {
   current: boolean;
 };
 
-const logout = async (router: NextRouter) => {
+const logout = async () => {
   try {
     await Auth.signOut();
-    await changeURLto(router, "/auth/login");
-    location.reload();
+    location.href = "/auth/login";
   } catch (error) {
     console.log("error signing out: ", error);
   }
@@ -48,9 +45,7 @@ export const Nav: FC<Props> = ({ items }) => {
           </Link>
         ))}
         <a
-          onClick={() => {
-            logout(router);
-          }}
+          onClick={logout}
           className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
         >
           Log out

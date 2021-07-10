@@ -1,9 +1,15 @@
-export const HappyBird = () => {
+export const HappyBird = ({
+  width = "400",
+  height = "350",
+}: {
+  width?: string;
+  height?: string;
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="400"
-      height="350"
+      width={width}
+      height={height}
       data-name="Layer 1"
       viewBox="0 0 887.772 772.831"
     >
