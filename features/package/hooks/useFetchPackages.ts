@@ -1,9 +1,9 @@
 import { API } from "aws-amplify";
 import { listPacks } from "../../../graphql/queries";
 import { ListPacksQuery } from "../../../API";
-import { useEffect, useState } from "react";
 import { Pack } from "../types";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { ApolloError, gql, useQuery } from "@apollo/client";
 
 export const fetchPackages = async (api: typeof API): Promise<Pack[]> => {
   const packagesData = (await api.graphql({
@@ -14,28 +14,47 @@ export const fetchPackages = async (api: typeof API): Promise<Pack[]> => {
   return packagesData.data.listPacks.items;
 };
 
-export const useFetchPackages = (): [
+type UseFetchPacksResponse = [
   Pack[],
-  { error: Error | null; loading: boolean }
-] => {
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  { error?: ApolloError; loading: boolean }
+];
 
-  const getPackages = async () => {
-    try {
-      const packagesData = await fetchPackages(API);
-      setPackages(packagesData);
-      setLoading(false);
-    } catch (e) {
-      setLoading(false);
-      setError(e);
-    }
-  };
+export const useFetchPacks = (): UseFetchPacksResponse => {
+  const { loading, error, data } = useQuery(FETCH_PACKS);
+  const packs = data?.listPacks.items;
 
-  useEffect(() => {
-    getPackages();
-  }, []);
-
-  return [packages, { error, loading }];
+  return [packs, { error, loading }];
 };
+
+const FETCH_PACKS = gql`
+  query ListPacks(
+    $filter: ModelPackFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPacks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        description
+        templateID
+        template {
+          id
+          name
+          description
+          documentTypes
+          createdAt
+          updatedAt
+          owner
+        }
+        documents {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;

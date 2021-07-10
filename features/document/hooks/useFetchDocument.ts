@@ -1,9 +1,15 @@
-import React, { Dispatch, useEffect, useState } from "react";
 import { API } from "aws-amplify";
 import { getDocument as getDocumentQuery } from "../../../graphql/queries";
 import { GetDocumentQuery } from "../../../API";
 import { Document } from "../types";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { Template } from "../../template";
+import {
+  ApolloError,
+  gql,
+  SubscribeToMoreOptions,
+  useQuery,
+} from "@apollo/client";
 
 export const fetchDocument = async (
   api: typeof API,
@@ -18,32 +24,51 @@ export const fetchDocument = async (
   return docData.data.getDocument;
 };
 
+type UseFetchDocumentResponse = [
+  Document,
+  {
+    error: ApolloError;
+    loading: boolean;
+    subscribeToMore: (
+      options: SubscribeToMoreOptions<GetDocumentQuery>
+    ) => () => void;
+  }
+];
+
 export const useFetchDocument = (
   id: string | string[]
-): [
-  Document,
-  Dispatch<React.SetStateAction<Document>>,
-  { error: Error | null; loading: boolean }
-] => {
-  const [document, setDocument] = useState(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+): UseFetchDocumentResponse => {
+  const { loading, error, data, subscribeToMore } = useQuery(FETCH_DOCUMENT, {
+    variables: {
+      id,
+    },
+  });
+  const doc = data?.getDocument;
 
-  const getDocument = async (id: string | string[]) => {
-    setLoading(true);
-    try {
-      const result = await fetchDocument(API, id);
-      setDocument(result);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      setError(error);
-    }
-  };
-
-  useEffect(() => {
-    getDocument(id);
-  }, [id]);
-
-  return [document, setDocument, { error, loading }];
+  return [doc, { error, loading, subscribeToMore }];
 };
+
+const FETCH_DOCUMENT = gql`
+  query GetDocument($id: ID!) {
+    getDocument(id: $id) {
+      id
+      name
+      description
+      type
+      url
+      packs {
+        items {
+          id
+          documentID
+          packID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;

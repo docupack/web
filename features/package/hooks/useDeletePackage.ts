@@ -1,38 +1,63 @@
-import { API } from "aws-amplify";
-import { deletePack as deletePackMutation } from "../../../graphql/mutations";
-import { useState } from "react";
-import { DeletePackInput } from "../../../API";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { DeletePackInput, DeletePackMutation } from "../../../API";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 
-const removePack = async (id: string) => {
-  return API.graphql({
-    query: deletePackMutation,
-    variables: { input: { id } },
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  });
-};
+type UseDeletePackResponse = [
+  (id: string) => Promise<DeletePackMutation["deletePack"] | null>,
+  { error?: ApolloError; loading: boolean }
+];
 
-export const useDeletePackage = (): [
-  (pack: DeletePackInput) => ReturnType<typeof removePack>,
-  { error: Error; loading: boolean }
-] => {
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+export const useDeletePack = (): UseDeletePackResponse => {
+  const [mutate, { error, loading }] = useMutation(DELETE_PACK_MUTATION);
 
-  const deletePack = async (pack: DeletePackInput) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await removePack(pack.id);
-      setLoading(false);
-      return result;
-    } catch (error) {
-      setLoading(false);
-      setError(error);
-      throw error;
-    }
+  const deletePack = async (id: string) => {
+    const result = await mutate({
+      variables: {
+        input: {
+          id,
+        } as DeletePackInput,
+      },
+    });
+    return result.data?.deletePack;
   };
 
   return [deletePack, { error, loading }];
 };
+
+const DELETE_PACK_MUTATION = gql`
+  mutation DeletePack(
+    $input: DeletePackInput!
+    $condition: ModelPackConditionInput
+  ) {
+    deletePack(input: $input, condition: $condition) {
+      id
+      name
+      description
+      templateID
+      template {
+        id
+        name
+        description
+        documentTypes
+        packs {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        owner
+      }
+      documents {
+        items {
+          id
+          documentID
+          packID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;

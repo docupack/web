@@ -1,45 +1,56 @@
-import { API } from "aws-amplify";
-import { createDocument as createDocumentMutation } from "../../../graphql/mutations";
 import { v4 as uuidv4 } from "uuid";
 import { CreateDocumentInput, CreateDocumentMutation } from "../../../API";
-import { useState } from "react";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 
-const createDocument = async (api: typeof API, doc: CreateDocumentInput) => {
-  if (!doc.name || !doc.type) return;
-
-  const result = (await api.graphql({
-    query: createDocumentMutation,
-    variables: { input: { ...doc, id: uuidv4() } as CreateDocumentInput },
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  })) as { data: CreateDocumentMutation };
-
-  return result.data.createDocument;
-};
-
-export const useCreateDocument = (): [
+type UseCreateDocumentResponse = [
   (
     doc: CreateDocumentInput
   ) => Promise<CreateDocumentMutation["createDocument"] | null>,
-  { error: Error; loading: boolean }
-] => {
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+  { error?: ApolloError; loading: boolean }
+];
 
-  const createDoc = async (doc: CreateDocumentInput) => {
-    setLoading(true);
-    setError(null);
+export const useCreateDocument = (): UseCreateDocumentResponse => {
+  const [mutate, { error, loading }] = useMutation(mutation);
 
-    try {
-      const result = await createDocument(API, doc);
-      setLoading(false);
-      return result;
-    } catch (error) {
-      setLoading(false);
-      setError(error);
-      return null;
-    }
+  const createDocument = async (doc: CreateDocumentInput) => {
+    const result = await mutate({
+      variables: {
+        input: {
+          ...doc,
+          id: uuidv4(),
+        } as CreateDocumentInput,
+      },
+    });
+    return result.data?.createDocument;
   };
 
-  return [createDoc, { error, loading }];
+  return [createDocument, { error, loading }];
 };
+
+const mutation = gql`
+  mutation CreateDocument(
+    $input: CreateDocumentInput!
+    $condition: ModelDocumentConditionInput
+  ) {
+    createDocument(input: $input, condition: $condition) {
+      id
+      name
+      description
+      type
+      url
+      packs {
+        items {
+          id
+          documentID
+          packID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
