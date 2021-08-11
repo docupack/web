@@ -1,18 +1,13 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { MainColumn } from "../../components";
-import { API, withSSRContext } from "aws-amplify";
-import { CreatePackInput, CreatePackMutation, Template } from "../../API";
-import { createPack } from "../../graphql/mutations";
-import { v4 as uuidv4 } from "uuid";
+import { Template } from "../../API";
 import { useRouter } from "next/router";
-import { fetchTemplates } from "../../features/template/hooks/useFetchTemplates";
+import { useFetchTemplates } from "../../features/template/hooks/useFetchTemplates";
 import { changeURLto } from "../../utils/changeURLto";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useCreatePackage } from "../../features/package/hooks/useCreatePackage";
 
-const NewPackagePage = ({
-  templates,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const NewPackagePage = () => {
+  const [templates] = useFetchTemplates();
   const [template, setTemplate] = useState(null);
   const [pack, setPack] = useState({ name: "", description: "" });
   const [createPack] = useCreatePackage();
@@ -138,17 +133,6 @@ const NewPackagePage = ({
       </form>
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const templates = await fetchTemplates(API);
-
-  return {
-    props: {
-      templates,
-    },
-  };
 };
 
 export default NewPackagePage;

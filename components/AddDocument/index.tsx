@@ -1,11 +1,17 @@
-export const AddDocument = () => {
+export const AddDocument = ({
+  width = "400",
+  height = "350",
+}: {
+  width?: string;
+  height?: string;
+}) => {
   return (
     <svg
       id="a14aeead-7a51-49c7-9dde-c662f5733ecb"
       data-name="Layer 1"
       xmlns="http://www.w3.org/2000/svg"
-      width="782.04441"
-      height="701.88002"
+      width={width}
+      height={height}
       viewBox="0 0 782.04441 701.88002"
     >
       <path

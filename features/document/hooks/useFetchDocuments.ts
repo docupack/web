@@ -1,9 +1,9 @@
 import { API } from "aws-amplify";
 import { listDocuments } from "../../../graphql/queries";
 import { ListDocumentsQuery } from "../../../API";
-import { useEffect, useState } from "react";
 import { Document } from "../types";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { ApolloError, gql, useQuery } from "@apollo/client";
 
 export const fetchDocuments = async (api: typeof API): Promise<Document[]> => {
   const documentsData = (await api.graphql({
@@ -14,28 +14,39 @@ export const fetchDocuments = async (api: typeof API): Promise<Document[]> => {
   return documentsData.data.listDocuments.items;
 };
 
-export const useFetchDocuments = (): [
+type UseFetchDocumentsResponse = [
   Document[],
-  { error: Error | null; loading: boolean }
-] => {
-  const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  { error?: ApolloError; loading: boolean }
+];
 
-  const getDocuments = async () => {
-    try {
-      const documents = await fetchDocuments(API);
-      setDocuments(documents);
-      setLoading(false);
-    } catch (e) {
-      setLoading(false);
-      setError(e);
-    }
-  };
-
-  useEffect(() => {
-    getDocuments();
-  }, []);
+export const useFetchDocuments = (): UseFetchDocumentsResponse => {
+  const { loading, error, data } = useQuery(FETCH_DOCUMENTS);
+  const documents = data?.listDocuments.items;
 
   return [documents, { error, loading }];
 };
+
+const FETCH_DOCUMENTS = gql`
+  query ListDocuments(
+    $filter: ModelDocumentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listDocuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        description
+        type
+        url
+        packs {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;

@@ -1,21 +1,16 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { API, withSSRContext } from "aws-amplify";
+import { API } from "aws-amplify";
 import { UpdateTemplateMutation } from "../../../API";
 import { updateTemplate } from "../../../graphql/mutations";
-import { fetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
 import { InputList, MainColumn } from "../../../components";
 import { changeURLto } from "../../../utils/changeURLto";
-import { GetServerSideProps } from "next";
-import { Template } from "../../../features/template";
+import { useFetchTemplate } from "../../../features/template/hooks/useFetchTemplate";
 
-type Props = {
-  template: Template;
-};
-
-const EditTemplatePage = ({ template }: Props) => {
+const EditTemplatePage = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [template] = useFetchTemplate(id);
   const [updatedTemplate, setUpdatedTemplate] = useState(null);
   const [documentTypes, setDocumentTypes] = useState([]);
 
@@ -128,17 +123,3 @@ const EditTemplatePage = ({ template }: Props) => {
 };
 
 export default EditTemplatePage;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  //
-  const { API } = withSSRContext(context);
-  const { id } = context.params;
-
-  const template = await fetchTemplate(API, id);
-
-  return {
-    props: {
-      template,
-    },
-  };
-};

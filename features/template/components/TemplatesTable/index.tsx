@@ -27,7 +27,7 @@ export const TemplatesTable: FC<Props> = ({ templates }) => {
   };
 
   const deleteAndRefetch = async (id: string) => {
-    await deleteTemplate({ id });
+    await deleteTemplate(id);
     await refetch();
   };
 

@@ -4,8 +4,7 @@ import { Document } from "../../types";
 import { API } from "aws-amplify";
 import { fetchDocuments } from "../../hooks/useFetchDocuments";
 import { useDeleteDocument } from "../../hooks/useDeleteDocument";
-import { Button, DeleteModal, EmptyState } from "../../../../components";
-import Image from "next/image";
+import { ButtonLink, DeleteModal, EmptyState } from "../../../../components";
 import Link from "next/link";
 import { AddDocument } from "../../../../components/AddDocument";
 
@@ -27,7 +26,7 @@ export const DocumentsTable: FC<Props> = ({ documents }) => {
   };
 
   const deleteAndRefetch = async (id: string) => {
-    await deleteDocument({ id });
+    await deleteDocument(id);
     await refetch();
   };
 
@@ -47,10 +46,8 @@ export const DocumentsTable: FC<Props> = ({ documents }) => {
   return (
     <div className="hidden sm:block">
       <div className="float-right pr-8 py-4">
-        <Link href="/documents/new">
-          <a>
-            <Button>Add new document</Button>
-          </a>
+        <Link href="/documents/new" passHref>
+          <ButtonLink>Add new document</ButtonLink>
         </Link>
       </div>
       {modalState.isOpen && (

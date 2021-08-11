@@ -1,49 +1,67 @@
 import { CreatePackInput, CreatePackMutation } from "../../../API";
-import { useState } from "react";
-import { API } from "aws-amplify";
 import { v4 as uuidv4 } from "uuid";
-import { createPack as createPackMutation } from "../../../graphql/mutations";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { gql, useMutation } from "@apollo/client";
 
-const createPackage = async (api: typeof API, pack: CreatePackInput) => {
-  const result = (await API.graphql({
-    query: createPackMutation,
-    variables: {
-      input: {
-        ...pack,
-        id: uuidv4(),
-      } as CreatePackInput,
-    },
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  })) as { data: CreatePackMutation };
+export const useCreatePackage = (): useCreatePackageResponse => {
+  const [mutate, { error, loading }] = useMutation(mutation);
 
-  return result.data.createPack;
+  const createPack = async (pack: CreatePackInput) => {
+    const result = await mutate({
+      variables: {
+        input: {
+          ...pack,
+          id: uuidv4(),
+        } as CreatePackInput,
+      },
+    });
+    return result.data?.createPack;
+  };
+
+  return [createPack, { error, loading }];
 };
 
-export const useCreatePackage = (): [
+type useCreatePackageResponse = [
   (pack: CreatePackInput) => Promise<CreatePackMutation["createPack"] | null>,
   {
     error: Error;
     loading: boolean;
   }
-] => {
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const createPack = async (pack: CreatePackInput) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await createPackage(API, pack);
-      setLoading(false);
-      return result;
-    } catch (e) {
-      setLoading(false);
-      setError(e);
-      return null;
+];
+const mutation = gql`
+  mutation CreatePack(
+    $input: CreatePackInput!
+    $condition: ModelPackConditionInput
+  ) {
+    createPack(input: $input, condition: $condition) {
+      id
+      name
+      description
+      templateID
+      template {
+        id
+        name
+        description
+        documentTypes
+        packs {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        owner
+      }
+      documents {
+        items {
+          id
+          documentID
+          packID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
     }
-  };
-
-  return [createPack, { error, loading }];
-};
+  }
+`;

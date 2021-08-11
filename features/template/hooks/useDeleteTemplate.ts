@@ -1,41 +1,53 @@
-import { API } from "aws-amplify";
-import {
-  deleteTemplate,
-  deleteTemplate as deleteTemplateMutation,
-} from "../../../graphql/mutations";
-import { useState } from "react";
-import { DeleteTemplateInput } from "../../../API";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { DeleteTemplateInput, DeleteTemplateMutation } from "../../../API";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 
-const removeTemplate = async (id: string) => {
-  return API.graphql({
-    query: deleteTemplateMutation,
-    variables: { input: { id } },
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  });
-};
+type UseDeleteTemplateResponse = [
+  (id: string) => Promise<DeleteTemplateMutation["deleteTemplate"] | null>,
+  { error?: ApolloError; loading: boolean }
+];
 
-export const useDeleteTemplate = (): [
-  (template: DeleteTemplateInput) => ReturnType<typeof deleteTemplate>,
-  { error: Error; loading: boolean }
-] => {
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+export const useDeleteTemplate = (): UseDeleteTemplateResponse => {
+  const [mutate, { error, loading }] = useMutation(DELETE_TEMPLATE_MUTATION);
 
-  const deleteTemplate = async (template: DeleteTemplateInput) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await removeTemplate(template.id);
-      setLoading(false);
-      return result;
-    } catch (error) {
-      setLoading(false);
-      setError(error);
-      throw error;
-    }
+  const deleteTemplate = async (id: string) => {
+    const result = await mutate({
+      variables: {
+        input: {
+          id,
+        } as DeleteTemplateInput,
+      },
+    });
+    return result.data?.deleteTemplate;
   };
 
   return [deleteTemplate, { error, loading }];
 };
+
+const DELETE_TEMPLATE_MUTATION = gql`
+  mutation DeleteTemplate(
+    $input: DeleteTemplateInput!
+    $condition: ModelTemplateConditionInput
+  ) {
+    deleteTemplate(input: $input, condition: $condition) {
+      id
+      name
+      description
+      documentTypes
+      packs {
+        items {
+          id
+          name
+          description
+          templateID
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;

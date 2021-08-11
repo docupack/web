@@ -1,9 +1,9 @@
 import { API } from "aws-amplify";
 import { listTemplates } from "../../../graphql/queries";
 import { ListTemplatesQuery } from "../../../API";
-import { useEffect, useState } from "react";
 import { Template } from "../types";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { ApolloError, gql, useQuery } from "@apollo/client";
 
 export const fetchTemplates = async (api: typeof API): Promise<Template[]> => {
   const templateData = (await api.graphql({
@@ -14,28 +14,38 @@ export const fetchTemplates = async (api: typeof API): Promise<Template[]> => {
   return templateData.data.listTemplates.items;
 };
 
-export const useFetchTemplates = (): [
+type UseFetchTemplatesResponse = [
   Template[],
-  { error: Error | null; loading: boolean }
-] => {
-  const [templates, setTemplates] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  { error?: ApolloError; loading: boolean }
+];
 
-  const getTemplates = async () => {
-    setLoading(true);
-    try {
-      const templateData = await fetchTemplates(API);
-      setTemplates(templateData);
-      setLoading(false);
-    } catch (e) {
-      setLoading(false);
-      setError(e);
-    }
-  };
-  useEffect(() => {
-    getTemplates();
-  }, []);
+export const useFetchTemplates = (): UseFetchTemplatesResponse => {
+  const { loading, error, data } = useQuery(FETCH_TEMPLATES);
+  const templates = data?.listTemplates.items;
 
   return [templates, { error, loading }];
 };
+
+const FETCH_TEMPLATES = gql`
+  query ListTemplates(
+    $filter: ModelTemplateFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listTemplates(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        description
+        documentTypes
+        packs {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;

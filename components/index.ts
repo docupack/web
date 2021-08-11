@@ -17,3 +17,4 @@ export { AlertMessage } from "./AlertMessage";
 export { EmptyState } from "./EmptyState";
 export { HappyBird } from "./HappyBird";
 export { CargoShip } from "./CargoShip";
+export { ButtonLink } from "./ButtonLink";

@@ -5,11 +5,11 @@ import Link from "next/link";
 
 type Props = {
   message: string;
-  goTo?: string;
+  link?: string;
   color: Color;
 };
 
-export const AlertMessage: FC<Props> = ({ message, goTo, color }) => {
+export const AlertMessage: FC<Props> = ({ message, link, color }) => {
   return (
     <div className={`rounded-md bg-${color}-50 p-4 w-full`}>
       <div className="flex">
@@ -21,9 +21,9 @@ export const AlertMessage: FC<Props> = ({ message, goTo, color }) => {
         </div>
         <div className="ml-3 flex-1 md:flex md:justify-between">
           <p className={`text-sm text-${color}-700`}>{message}</p>
-          {goTo && (
+          {link && (
             <p className="mt-3 text-sm md:mt-0 md:ml-6">
-              <Link href={goTo}>
+              <Link href={link}>
                 <a
                   className={`whitespace-nowrap font-medium text-${color}-700 hover:text-${color}-600`}
                 >

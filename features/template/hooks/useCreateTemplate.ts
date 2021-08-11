@@ -1,54 +1,54 @@
-import { useState } from "react";
-import { API } from "aws-amplify";
-import { createTemplate as createTemplateMutation } from "../../../graphql/mutations";
 import { v4 as uuidv4 } from "uuid";
 import { CreateTemplateInput, CreateTemplateMutation } from "../../../API";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 
-const create = async (template: CreateTemplateInput) => {
-  if (!template.name) return;
-
-  const result = (await API.graphql({
-    query: createTemplateMutation,
-    variables: {
-      input: {
-        ...template,
-        id: uuidv4(),
-      } as CreateTemplateInput,
-    },
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  })) as { data: CreateTemplateMutation };
-
-  return result.data.createTemplate;
-};
-
-export const useCreateTemplate = (): [
+type UseCreateTemplateResponse = [
   (
     template: CreateTemplateInput
   ) => Promise<CreateTemplateMutation["createTemplate"]>,
-  {
-    error: Error | null;
-    loading: boolean;
-  }
-] => {
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+  { error?: ApolloError; loading: boolean }
+];
+
+export const useCreateTemplate = (): UseCreateTemplateResponse => {
+  const [mutate, { error, loading }] = useMutation(mutation);
 
   const createTemplate = async (template: CreateTemplateInput) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await create(template);
-      setLoading(false);
-      return result;
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-      setError(error);
-      return null;
-    }
+    const result = await mutate({
+      variables: {
+        input: { ...template, id: uuidv4() } as CreateTemplateInput,
+      },
+    });
+    return result.data?.createTemplate;
   };
 
   return [createTemplate, { error, loading }];
 };
+
+const mutation = gql`
+  mutation CreateTemplate(
+    $input: CreateTemplateInput!
+    $condition: ModelTemplateConditionInput
+  ) {
+    createTemplate(input: $input, condition: $condition) {
+      id
+      name
+      description
+      documentTypes
+      packs {
+        items {
+          id
+          name
+          description
+          templateID
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;

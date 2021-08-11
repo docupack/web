@@ -1,38 +1,52 @@
-import { API } from "aws-amplify";
-import { deleteDocument as deleteDocumentMutation } from "../../../graphql/mutations";
-import { useState } from "react";
-import { DeleteDocumentInput } from "../../../API";
-import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+import { DeleteDocumentInput, DeleteDocumentMutation } from "../../../API";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 
-const deleteDocument = async (api: typeof API, id: string) => {
-  return api.graphql({
-    query: deleteDocumentMutation,
-    variables: { input: { id } },
-    authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-  });
-};
+type UseDeleteDocumentResponse = [
+  (id: string) => Promise<DeleteDocumentMutation["deleteDocument"] | null>,
+  { error?: ApolloError; loading: boolean }
+];
 
-export const useDeleteDocument = (): [
-  (document: DeleteDocumentInput) => ReturnType<typeof deleteDocument>,
-  { error: Error; loading: boolean }
-] => {
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+export const useDeleteDocument = (): UseDeleteDocumentResponse => {
+  const [mutate, { error, loading }] = useMutation(DELETE_DOCUMENT_MUTATION);
 
-  const deleteDoc = async (doc: DeleteDocumentInput) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await deleteDocument(API, doc.id);
-      setLoading(false);
-      return result;
-    } catch (error) {
-      setLoading(false);
-      setError(error);
-      throw error;
-    }
+  const deleteDocument = async (id: string) => {
+    const result = await mutate({
+      variables: {
+        input: {
+          id,
+        } as DeleteDocumentInput,
+      },
+    });
+    return result.data?.deleteDocument;
   };
 
-  return [deleteDoc, { error, loading }];
+  return [deleteDocument, { error, loading }];
 };
+
+const DELETE_DOCUMENT_MUTATION = gql`
+  mutation DeleteDocument(
+    $input: DeleteDocumentInput!
+    $condition: ModelDocumentConditionInput
+  ) {
+    deleteDocument(input: $input, condition: $condition) {
+      id
+      name
+      description
+      type
+      url
+      packs {
+        items {
+          id
+          documentID
+          packID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;

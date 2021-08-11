@@ -1,13 +1,13 @@
 import { EmptyState, HappyBird, MainColumn } from "../../components";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { withSSRContext } from "aws-amplify";
 import { TemplatesTable } from "../../features/template";
-import { fetchTemplates } from "../../features/template/hooks/useFetchTemplates";
+import { useFetchTemplates } from "../../features/template/hooks/useFetchTemplates";
 import React from "react";
 
-const Templates = ({
-  templates,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Templates = () => {
+  const [templates, { loading }] = useFetchTemplates();
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <MainColumn pageTitle="Templates">
       {templates.length === 0 ? (
@@ -21,16 +21,6 @@ const Templates = ({
       )}
     </MainColumn>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { API } = withSSRContext(context);
-  const templates = await fetchTemplates(API);
-  return {
-    props: {
-      templates,
-    },
-  };
 };
 
 export default Templates;
